@@ -222,6 +222,7 @@ export default function KPIWizard() {
     const url = window.__KPI_ENDPOINT__;
     if (!url) throw new Error('Falta window.__KPI_ENDPOINT__');
 
+    console.log('KPI: guardarResultadosKPI → POST', { url, payload });
     const res = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(payload) // sin Content-Type para evitar preflight
@@ -231,18 +232,21 @@ export default function KPIWizard() {
     if (txt.startsWith('error')) {
       throw new Error(txt);
     }
+    console.log('KPI: guardarResultadosKPI → respuesta', txt);
     return txt; // 'ok'
   }
 
   // Guarda cada ejecución en un backend externo (Apps Script/Drive/Sheets)
   const finalize = async () => {
      const data = { ...summary(), timestamp: new Date().toISOString() };
+     console.log('KPI: payload creado', data);
      // Opcional: respaldo local para control personal
      try {
        const key = 'kpi_wizard_runs';
        const prev = JSON.parse(localStorage.getItem(key) || '[]');
        prev.push(data);
        localStorage.setItem(key, JSON.stringify(prev));
+       console.log('KPI: guardado local en localStorage', { clave: key, total: prev.length });
      } catch {}
 
     // Enviar a Apps Script: toma la URL desde index.html
@@ -252,6 +256,7 @@ export default function KPIWizard() {
       return;
     }
     try {
+      console.log('KPI: enviando a endpoint', endpoint);
       const res = await fetch(endpoint, {
         method: 'POST',
         // sin Content-Type => evita preflight CORS
@@ -259,10 +264,11 @@ export default function KPIWizard() {
       });
       const txt = await res.text(); // tus scripts devuelven 'ok' como texto
       if (txt.startsWith('error')) throw new Error(txt);
+      console.log('KPI: respuesta del endpoint', txt);
       alert('Registro guardado ✅');
       resetAll();
     } catch (e) {
-      console.error('Error enviando al endpoint', e);
+      console.error('KPI: fallo al enviar', e);
       alert('No se pudo enviar al endpoint. Revisa la consola.');
     }
   };
