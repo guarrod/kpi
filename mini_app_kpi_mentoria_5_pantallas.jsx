@@ -268,7 +268,7 @@ export default function KPIWizard() {
       const ok = navigator.sendBeacon(ENDPOINT, new Blob([json], { type: 'text/plain;charset=UTF-8' }));
       if (ok) {
         console.log('KPI: beacon enviado');
-        alert('Registro enviado ✅');
+        alert('✅ Éxito! Ahora ya tienes tus KPIs ');
         resetAll();
         return;
       }
