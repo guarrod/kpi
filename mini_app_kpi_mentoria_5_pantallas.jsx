@@ -237,41 +237,55 @@ export default function KPIWizard() {
   }
 
   // Guarda cada ejecución en un backend externo (Apps Script/Drive/Sheets)
-  const finalize = async () => {
-     const data = { ...summary(), timestamp: new Date().toISOString() };
-     console.log('KPI: payload creado', data);
-     // Opcional: respaldo local para control personal
-     try {
-       const key = 'kpi_wizard_runs';
-       const prev = JSON.parse(localStorage.getItem(key) || '[]');
-       prev.push(data);
-       localStorage.setItem(key, JSON.stringify(prev));
-       console.log('KPI: guardado local en localStorage', { clave: key, total: prev.length });
-     } catch {}
+ const finalize = async () => {
+  const data = { ...summary(), timestamp: new Date().toISOString() };
+  console.log('KPI: payload creado', data);
 
-    // Enviar a Apps Script: toma la URL desde index.html
-    const endpoint = window.__KPI_ENDPOINT__;
-    if (!endpoint) {
-      alert('Falta configurar window.__KPI_ENDPOINT__ en index.html');
-      return;
+  // Respaldo local (opcional)
+  try {
+    const key = 'kpi_wizard_runs';
+    const prev = JSON.parse(localStorage.getItem(key) || '[]');
+    prev.push(data);
+    localStorage.setItem(key, JSON.stringify(prev));
+    console.log('KPI: guardado local en localStorage');
+  } catch (e) {
+    console.warn('KPI: no se pudo guardar en localStorage', e);
+  }
+
+  // Lee endpoint desde env
+  const ENDPOINT = import.meta.env.VITE_KPI_ENDPOINT;
+  if (!ENDPOINT) {
+    console.error('KPI: falta configurar VITE_KPI_ENDPOINT');
+    alert('Falta configurar VITE_KPI_ENDPOINT (ver .env.production)');
+    return;
+  }
+
+  try {
+    const json = JSON.stringify(data);
+
+    // 1) Intento con sendBeacon (sin CORS)
+    if (navigator.sendBeacon) {
+      const ok = navigator.sendBeacon(ENDPOINT, new Blob([json], { type: 'text/plain;charset=UTF-8' }));
+      if (ok) {
+        console.log('KPI: beacon enviado');
+        alert('Registro enviado ✅');
+        resetAll();
+        return;
+      }
+      console.warn('KPI: sendBeacon devolvió false, probamos fetch(no-cors)');
     }
-    try {
-      console.log('KPI: enviando a endpoint', endpoint);
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        // sin Content-Type => evita preflight CORS
-        body: JSON.stringify(data),
-      });
-      const txt = await res.text(); // tus scripts devuelven 'ok' como texto
-      if (txt.startsWith('error')) throw new Error(txt);
-      console.log('KPI: respuesta del endpoint', txt);
-      alert('Registro guardado ✅');
-      resetAll();
-    } catch (e) {
-      console.error('KPI: fallo al enviar', e);
-      alert('No se pudo enviar al endpoint. Revisa la consola.');
-    }
-  };
+
+    // 2) Fallback con fetch(no-cors) sin headers
+    await fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', body: json });
+    console.log('KPI: fetch(no-cors) despachado');
+    alert('Registro enviado ✅');
+    resetAll();
+  } catch (e) {
+    console.error('KPI: error enviando al endpoint', e);
+    alert('No se pudo enviar al endpoint. Revisa la consola.');
+  }
+};
+
 
   const Stepper = () => (
     <div className="flex items-center gap-2 mb-6">
