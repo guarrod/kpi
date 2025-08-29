@@ -84,12 +84,12 @@ const KPI_CATALOG = [
 
   // Eficiencia & Fricción
   { id: "time-on-task", cat: "Eficiencia & Fricción", title: "Tiempo en tarea", how: "Promedio (p50/p90) desde inicio a confirmación.", desc: "¿Qué tan rápido ocurre?" },
-  { id: "success", cat: "Eficiencia & Fricción", title: "Tasa de éxito", how: "% de operaciones completadas sin error.", desc: "¿Se logra sin trabas?" },
+  { id: "success", cat: "Eficiencia & Fricción", title: "Tasa de éxito", how: "% de operaciones completadas sin error (sin necesidad de reintentos).", desc: "¿Se logra sin trabas?" }, // (fusionado con retry)
   { id: "steps", cat: "Eficiencia & Fricción", title: "Pasos por tarea", how: "Promedio de pantallas/clics para completar.", desc: "¿Es compacto?" },
   { id: "abandon", cat: "Eficiencia & Fricción", title: "Tasa de abandono", how: "% que inician y no finalizan el flujo.", desc: "¿Dónde se caen?" },
-  { id: "errors", cat: "Eficiencia & Fricción", title: "Errores por flujo", how: "Errores 4xx/validación por 1.000 operaciones.", desc: "¿Qué rompe la tarea?" },
-  { id: "retry", cat: "Eficiencia & Fricción", title: "Reintentos", how: "# de intentos promedio hasta completar.", desc: "¿Cuántas veces repiten?" },
+  { id: "user-errors", cat: "Eficiencia & Fricción", title: "Errores de usuario/flujo", how: "Errores percibidos (ej. validación fallida) por cada 1.000 operaciones.", desc: "¿Qué rompe la tarea para el cliente?" }, // (ajustado)
   { id: "latency", cat: "Eficiencia & Fricción", title: "Tiempo de respuesta", how: "ms de latencia en endpoints/pantallas clave.", desc: "¿Carga rápido?" },
+  { id: "interruption", cat: "Eficiencia & Fricción", title: "Transacciones interrumpidas", how: "% de operaciones que no concluyen por timeout o caída técnica.", desc: "¿Qué tan confiable es?" }, // (nuevo)
 
   // Satisfacción & Experiencia
   { id: "nps", cat: "Satisfacción & Experiencia", title: "NPS", how: "% promotores − % detractores tras usar el módulo.", desc: "¿Nos recomendarían?" },
@@ -108,12 +108,16 @@ const KPI_CATALOG = [
   { id: "selfservice", cat: "Autoservicio & Costos", title: "% autogestión exitosa", how: "% de casos resueltos sin intervención humana.", desc: "¿Resuelven solos?" },
   { id: "digital-vs-branch", cat: "Autoservicio & Costos", title: "Digital vs. sucursal", how: "% de operaciones digitales vs. presenciales.", desc: "¿Migramos el canal?" },
   { id: "support-reduction", cat: "Autoservicio & Costos", title: "Reducción llamadas soporte", how: "Variación de llamadas sobre el tema.", desc: "¿Bajó el costo?" },
+  { id: "help-usage", cat: "Autoservicio & Costos", title: "Uso de ayuda digital", how: "% de consultas resueltas vía FAQ/chatbot vs tickets.", desc: "¿Qué tan efectiva es la ayuda digital?" }, // (nuevo)
+
 
   // Seguridad & Cumplimiento
   { id: "failed-login", cat: "Seguridad & Cumplimiento", title: "Intentos de login fallidos", how: "# por 1.000 sesiones, bloqueo de cuentas.", desc: "¿Hay fricción o riesgo?" },
   { id: "2fa", cat: "Seguridad & Cumplimiento", title: "2FA éxito", how: "% de autenticaciones 2FA exitosas.", desc: "¿Funciona la seguridad?" },
   { id: "kyc", cat: "Seguridad & Cumplimiento", title: "Tiempo KYC", how: "Minutos promedio de verificación.", desc: "¿Qué tan ágil es?" },
   { id: "fraud", cat: "Seguridad & Cumplimiento", title: "Fraude detectado/prevenido", how: "# / monto bloqueado.", desc: "¿Protegemos bien?" },
+  { id: "onboarding", cat: "Seguridad & Cumplimiento", title: "Tiempo de activación de empresa/usuario", how: "Tiempo promedio desde registro hasta poder operar en banca empresas.", desc: "¿Qué tan rápido arrancan los nuevos clientes?" }, // (nuevo)
+
 
   // Salud técnica
   { id: "uptime", cat: "Salud técnica", title: "Disponibilidad (uptime)", how: "% mensual de uptime del servicio.", desc: "¿Está arriba?" },
