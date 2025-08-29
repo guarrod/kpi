@@ -217,6 +217,56 @@ export default function KPIWizard() {
     alert("Resumen copiado en Markdown ✅");
   };
 
+  // Función para guardar (sin CORS preflight)
+  async function guardarResultadosKPI(payload) {
+    const url = window.__KPI_ENDPOINT__;
+    if (!url) throw new Error('Falta window.__KPI_ENDPOINT__');
+
+    const res = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(payload) // sin Content-Type para evitar preflight
+    });
+
+    const txt = await res.text();
+    if (txt.startsWith('error')) {
+      throw new Error(txt);
+    }
+    return txt; // 'ok'
+  }
+
+  // Guarda cada ejecución en un backend externo (Apps Script/Drive/Sheets)
+  const finalize = async () => {
+     const data = { ...summary(), timestamp: new Date().toISOString() };
+     // Opcional: respaldo local para control personal
+     try {
+       const key = 'kpi_wizard_runs';
+       const prev = JSON.parse(localStorage.getItem(key) || '[]');
+       prev.push(data);
+       localStorage.setItem(key, JSON.stringify(prev));
+     } catch {}
+
+    // Enviar a Apps Script: toma la URL desde index.html
+    const endpoint = window.__KPI_ENDPOINT__;
+    if (!endpoint) {
+      alert('Falta configurar window.__KPI_ENDPOINT__ en index.html');
+      return;
+    }
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        // sin Content-Type => evita preflight CORS
+        body: JSON.stringify(data),
+      });
+      const txt = await res.text(); // tus scripts devuelven 'ok' como texto
+      if (txt.startsWith('error')) throw new Error(txt);
+      alert('Registro guardado ✅');
+      resetAll();
+    } catch (e) {
+      console.error('Error enviando al endpoint', e);
+      alert('No se pudo enviar al endpoint. Revisa la consola.');
+    }
+  };
+
   const Stepper = () => (
     <div className="flex items-center gap-2 mb-6">
       {[0, 1, 2, 3, 4].map((i) => (
@@ -487,7 +537,7 @@ export default function KPIWizard() {
         </Button>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-400">{Object.keys(selected).length} KPI’s</span>
-          <Button onClick={() => setStep(s => Math.min(4, s + 1))} className="gap-2">
+          <Button onClick={() => (step === 4 ? finalize() : setStep(s => Math.min(4, s + 1)))} className="gap-2">
             {step === 4 ? 'Finalizar' : 'Siguiente'} <ArrowRight className="h-4 w-4" />
           </Button>
         </div>

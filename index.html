@@ -7,7 +7,13 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- ⬇️ Añade ESTO: pega aquí la URL /exec de tu Apps Script -->
+    <script>
+      window.__KPI_ENDPOINT__ = 'https://script.google.com/macros/s/AKfycb.../exec';
+    </script>
+
+    <!-- Este debe quedar DESPUÉS del script anterior -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
-  </html>
-
+</html>
