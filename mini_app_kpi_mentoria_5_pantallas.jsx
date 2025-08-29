@@ -162,6 +162,7 @@ export default function KPIWizard() {
   const [search, setSearch] = React.useState("");
   const [filterCats, setFilterCats] = React.useState(CATEGORIES);
   const [selected, setSelected] = React.useState({}); // {kpiId: {baseline:"", target:"", timeframe:"Qx"}}
+  const [toast, setToast] = React.useState(null);
 
   const progress = ((step + 1) / 5) * 100;
 
@@ -315,6 +316,7 @@ const finalize = async () => {
     }
   }
 };
+
 
 
 
@@ -593,6 +595,12 @@ const finalize = async () => {
           </Button>
         </div>
       </div>
-    </div>
+   {/* Toast flotante dentro del root (no rompe el nodo raíz) */}
+   {toast && (
+     <div className="fixed bottom-4 right-4 z-50 rounded-xl bg-black/90 text-white px-4 py-2 shadow-lg">
+       {toast}
+     </div>
+   )}
+ </div>
   );
 }
