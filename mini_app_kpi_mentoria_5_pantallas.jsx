@@ -237,7 +237,7 @@ export default function KPIWizard() {
   }
 
   // Guarda cada ejecución en un backend externo (Apps Script/Drive/Sheets)
- const finalize = async () => {
+const finalize = async () => {
   const data = { ...summary(), timestamp: new Date().toISOString() };
   console.log('KPI: payload creado', data);
 
@@ -256,20 +256,48 @@ export default function KPIWizard() {
   const ENDPOINT = import.meta.env.VITE_KPI_ENDPOINT;
   if (!ENDPOINT) {
     console.error('KPI: falta configurar VITE_KPI_ENDPOINT');
-    alert('Falta configurar VITE_KPI_ENDPOINT (ver .env.production)');
+    if (setToast) {
+      setToast('⚠️ Falta configurar VITE_KPI_ENDPOINT (.env.production)');
+      setTimeout(() => setToast(null), 4000);
+    }
     return;
   }
+
+  const onSuccess = () => {
+    console.log('KPI: envío despachado (beacon o fetch no-cors)');
+    if (setToast) {
+      setToast('✅ KPIs enviados');
+      // reset sin bloquear el hilo principal
+      setTimeout(() => {
+        if (React.startTransition) {
+          React.startTransition(() => resetAll());
+        } else {
+          resetAll();
+        }
+        setToast(null);
+      }, 0);
+    } else {
+      // fallback silencioso
+      if (React.startTransition) {
+        React.startTransition(() => resetAll());
+      } else {
+        resetAll();
+      }
+    }
+  };
 
   try {
     const json = JSON.stringify(data);
 
     // 1) Intento con sendBeacon (sin CORS)
     if (navigator.sendBeacon) {
-      const ok = navigator.sendBeacon(ENDPOINT, new Blob([json], { type: 'text/plain;charset=UTF-8' }));
+      const ok = navigator.sendBeacon(
+        ENDPOINT,
+        new Blob([json], { type: 'text/plain;charset=UTF-8' })
+      );
       if (ok) {
         console.log('KPI: beacon enviado');
-        alert('✅ Éxito! Ahora ya tienes tus KPIs ');
-        resetAll();
+        onSuccess();
         return;
       }
       console.warn('KPI: sendBeacon devolvió false, probamos fetch(no-cors)');
@@ -278,13 +306,16 @@ export default function KPIWizard() {
     // 2) Fallback con fetch(no-cors) sin headers
     await fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', body: json });
     console.log('KPI: fetch(no-cors) despachado');
-    alert('Registro enviado ✅');
-    resetAll();
+    onSuccess();
   } catch (e) {
     console.error('KPI: error enviando al endpoint', e);
-    alert('No se pudo enviar al endpoint. Revisa la consola.');
+    if (setToast) {
+      setToast('❌ Error al enviar. Revisa la consola.');
+      setTimeout(() => setToast(null), 4000);
+    }
   }
 };
+
 
 
   const Stepper = () => (
