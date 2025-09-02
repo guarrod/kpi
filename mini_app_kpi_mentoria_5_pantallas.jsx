@@ -125,6 +125,76 @@ const KPI_CATALOG = [
   { id: "mttr", cat: "Salud técnica", title: "MTTR", how: "Tiempo medio de recuperación ante incidentes.", desc: "¿Cuán rápido reponemos?" },
 ];
 
+// URLs de detalle por KPI (para modal o documentación)
+const KPI_URLS = {
+  adoption: "/kpi/adoption",
+  active: "/kpi/active",
+  activation: "/kpi/activation",
+  "feature-usage": "/kpi/feature-usage",
+  "time-on-task": "/kpi/time-on-task",
+  success: "/kpi/success",
+  steps: "/kpi/steps",
+  abandon: "/kpi/abandon",
+  "user-errors": "/kpi/user-errors",
+  latency: "/kpi/latency",
+  interruption: "/kpi/interruption",
+  nps: "/kpi/nps",
+  csat: "/kpi/csat",
+  sus: "/kpi/sus",
+  ces: "/kpi/ces",
+  complaints: "/kpi/complaints",
+  conversion: "/kpi/conversion",
+  value: "/kpi/value",
+  cross: "/kpi/cross",
+  retention: "/kpi/retention",
+  selfservice: "/kpi/selfservice",
+  "digital-vs-branch": "/kpi/digital-vs-branch",
+  "support-reduction": "/kpi/support-reduction",
+  "help-usage": "/kpi/help-usage",
+  "failed-login": "/kpi/failed-login",
+  "2fa": "/kpi/2fa",
+  kyc: "/kpi/kyc",
+  fraud: "/kpi/fraud",
+  onboarding: "/kpi/onboarding",
+  uptime: "/kpi/uptime",
+  "errors-5xx": "/kpi/errors-5xx",
+  mttr: "/kpi/mttr",
+};
+
+// Catálogo enriquecido con URL
+const KPI_CATALOG_WITH_URL = KPI_CATALOG.map(k => ({ ...k, url: KPI_URLS[k.id] || "" }));
+
+// Contenido editable por KPI para el modal
+// Estructura: { [id]: { title: string, subtitle: string, html: string } }
+// Puedes rellenar libremente el campo html con tu propio contenido.
+const KPI_DETAILS = {
+  // Ejemplos:
+   adoption: {
+     title: "Tasa de adopción",
+     subtitle: "Uso & Adopción",
+     html: `<p>Define el porcentaje de empresas que usan una funcionalidad en X días desde su lanzamiento.</p>
+            <ul><li>Fórmula: nuevos usuarios de la funcionalidad / total objetivo.</li></ul>`
+   },
+   active: {
+     title: "Tasa de actividad",
+     subtitle: "Uso & Adopción",
+     html: `<p>Define el porcentaje de empresas que usan una funcionalidad en X días desde su lanzamiento.</p>
+            <ul><li>Fórmula: nuevos usuarios de la funcionalidad / total objetivo.</li></ul>`
+   },
+   activation: {
+     title: "El de activacion",
+     subtitle: "Uso & Adopción",
+     html: `<p>Define el porcentaje de empresas que usan una funcionalidad en X días desde su lanzamiento.</p>
+            <ul><li>Fórmula: nuevos usuarios de la funcionalidad / total objetivo.</li></ul>`
+   },
+   active: {
+     title: "Tasa de actividad",
+     subtitle: "Uso & Adopción",
+     html: `<p>Define el porcentaje de empresas que usan una funcionalidad en X días desde su lanzamiento.</p>
+            <ul><li>Fórmula: nuevos usuarios de la funcionalidad / total objetivo.</li></ul>`
+   },
+};
+
 const CATEGORIES = [
   "Uso & Adopción",
   "Eficiencia & Fricción",
@@ -134,21 +204,6 @@ const CATEGORIES = [
   "Seguridad & Cumplimiento",
   "Salud técnica",
 ];
-
-/* const SERVICES = [
-  "Consultar saldos y movimientos",
-  "Descargar movimientos / estados",
-  "Pagos de servicios",
-  "Pagos de terceros",
-  "Nómina (pagos masivos)",
-  "Transferencias al exterior",
-  "Descargar certificados bancarios",
-  "Cambiar contraseña",
-  "Activar token (físico/virtual)",
-  "Cambio de dispositivo",
-  "Estados de cuenta (tarjetas/cuentas)",
-  "Ahorro / Inversión (ver, fondear, retirar)",
-]; */
 
 export default function KPIWizard() {
   const [step, setStep] = React.useState(0);
@@ -163,10 +218,31 @@ export default function KPIWizard() {
   const [filterCats, setFilterCats] = React.useState(CATEGORIES);
   const [selected, setSelected] = React.useState({}); // {kpiId: {baseline:"", target:"", timeframe:"Qx"}}
   const [toast, setToast] = React.useState(null);
+  const [info, setInfo] = React.useState({ open: false, url: "", title: "", id: "" });
 
   const progress = ((step + 1) / 5) * 100;
 
-  const filteredKPIs = filterKPIsHelper(KPI_CATALOG, filterCats, search);
+  const filteredKPIs = filterKPIsHelper(KPI_CATALOG_WITH_URL, filterCats, search);
+
+  // Base opcional para URLs (de .env)
+  const KPI_BASE = import.meta?.env?.VITE_KPI_BASE_URL || "";
+  const resolveKpiUrl = (url) => {
+    if (!url) return "";
+    if (/^https?:\/\//i.test(url)) return url;
+    return `${KPI_BASE}${url}`;
+  };
+
+  // Datos enriquecidos para el modal (title/subtitle/html) con fallback al catálogo
+  const kpiForModal = React.useMemo(() => KPI_CATALOG_WITH_URL.find(x => x.id === info.id), [info.id]);
+  const modalDetail = React.useMemo(() => {
+    if (!kpiForModal) return null;
+    const d = KPI_DETAILS[info.id] || {};
+    return {
+      title: d.title || kpiForModal.title,
+      subtitle: d.subtitle || kpiForModal.cat,
+      html: d.html || `<p>${kpiForModal.desc}</p><p style="color:#6b7280;font-size:12px;">Cómo se mide: ${kpiForModal.how}</p>`
+    };
+  }, [info.id, kpiForModal]);
 
   const toggleCat = (cat) => {
     setFilterCats(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
@@ -201,7 +277,7 @@ export default function KPIWizard() {
     setSelected({});
   };
 
-  const summary = () => buildSummary(selected, KPI_CATALOG, service, bizGoal, userGoal, tasks);
+  const summary = () => buildSummary(selected, KPI_CATALOG_WITH_URL, service, bizGoal, userGoal, tasks);
 
   const copyMarkdown = async () => {
     const data = summary();
@@ -409,7 +485,7 @@ const finalize = async () => {
                       {tasks.length > 1 && (
                         <Button variant="ghost" size="icon" onClick={() => removeTask(i)} className="shrink-0"><Trash2 className="h-4 w-4" /></Button>
                       )}
-                    </div>
+  </div>
                   ))}
                   <Button onClick={addTask} variant="secondary" className="gap-2"><Plus className="h-4 w-4" /> Añadir tarea</Button>
                 </div>
@@ -451,7 +527,19 @@ const finalize = async () => {
                         <Checkbox checked={!!selected[k.id]} onCheckedChange={() => toggleKPI(k.id)} />
                         <div>
                           <div className="gap-2 mb-1">
-                            <div className="font-medium">{k.title}</div>
+                            <div className="font-medium flex items-center gap-2">
+                              {k.title}
+                              {k.url && (
+                                <button
+                                  type="button"
+                                  title="Más info"
+                                  onClick={(e) => { e.stopPropagation(); setInfo({ open: true, url: resolveKpiUrl(k.url), title: k.title, id: k.id }); }}
+                                  className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full border text-xs text-gray-600 hover:bg-gray-100"
+                                >
+                                  ?
+                                </button>
+                              )}
+                            </div>
                             <div><Badge variant="outline">{k.cat}</Badge></div>
                             
                           </div>
@@ -482,13 +570,23 @@ const finalize = async () => {
                   <p className="text-sm text-gray-500">Primero selecciona KPI’s en la pantalla anterior.</p>
                 )}
                 {Object.keys(selected).map(id => {
-                  const k = KPI_CATALOG.find(x => x.id === id);
+                  const k = KPI_CATALOG_WITH_URL.find(x => x.id === id);
                   return (
                     <div key={id} className="border rounded-2xl p-4">
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                         <div className="flex items-center gap-2">
                           <Badge variant="outline">{k.cat}</Badge>
                           <span className="font-semibold">{k.title}</span>
+                          {k.url && (
+                            <button
+                              type="button"
+                              title="Más info"
+                              onClick={() => setInfo({ open: true, url: resolveKpiUrl(k.url), title: k.title, id: k.id })}
+                              className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full border text-xs text-gray-600 hover:bg-gray-100"
+                            >
+                              ?
+                            </button>
+                          )}
                         </div>
                         <span className="text-xs text-gray-500">{k.how}</span>
                       </div>
@@ -542,7 +640,7 @@ const finalize = async () => {
                     <div className="space-y-3">
                       {Object.keys(selected).length === 0 && <p className="text-sm text-gray-500">No hay KPI’s seleccionados.</p>}
                       {Object.keys(selected).map(id => {
-                        const k = KPI_CATALOG.find(x => x.id === id);
+                        const k = KPI_CATALOG_WITH_URL.find(x => x.id === id);
                         const meta = selected[id];
                         return (
                           <div key={id} className="border rounded-2xl p-3">
@@ -552,7 +650,19 @@ const finalize = async () => {
                                   
                               </div>
                               <div className="gap-2">
-                                <div className="font-medium">{k.title}</div>
+                                <div className="font-medium flex items-center gap-2">
+                                  {k.title}
+                                  {k.url && (
+                                    <button
+                                      type="button"
+                                      title="Más info"
+                                      onClick={() => setInfo({ open: true, url: resolveKpiUrl(k.url), title: k.title, id: k.id })}
+                                      className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full border text-xs text-gray-600 hover:bg-gray-100"
+                                    >
+                                      ?
+                                    </button>
+                                  )}
+                                </div>
                                 <div className="text-xs text-gray-500">{k.desc}</div>
                               </div>
                               
@@ -596,6 +706,32 @@ const finalize = async () => {
         </div>
       </div>
    {/* Toast flotante dentro del root (no rompe el nodo raíz) */}
+      {info.open && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => { setInfo({ open: false, url: '', title: '', id: '' }); }}>
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl h-[75vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-3 border-b">
+              <div className="font-semibold text-sm">Más info: {modalDetail?.title || info.title}</div>
+              <div className="flex items-center gap-2">
+                {info.url && <a href={info.url} target="_blank" rel="noreferrer" className="text-xs text-magno-600 underline">Abrir en nueva pestaña</a>}
+                <a href={`https://www.google.com/search?q=${encodeURIComponent('KPI ' + info.title)}&udm=14`} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">Ver en Google (Gemini)</a>
+                <button className="w-7 h-7 rounded-full border text-sm" onClick={() => { setInfo({ open: false, url: '', title: '', id: '' }); }}>×</button>
+              </div>
+            </div>
+            <div className="flex-1">
+              {modalDetail ? (
+                <div className="p-4 overflow-auto h-full">
+                  {modalDetail?.subtitle && <div className="text-xs text-gray-500 mb-2">{modalDetail.subtitle}</div>}
+                  <div className="prose max-w-none text-sm" dangerouslySetInnerHTML={{ __html: modalDetail.html }} />
+                </div>
+              ) : info.url ? (
+                <iframe src={info.url} className="w-full h-full rounded-b-xl" title="Más info" />
+              ) : (
+                <div className="p-4 text-sm text-gray-500">No hay URL disponible para este KPI.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
    {toast && (
      <div className="fixed bottom-4 right-4 z-50 rounded-xl bg-black/90 text-white px-4 py-2 shadow-lg">
        {toast}
