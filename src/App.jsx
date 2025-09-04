@@ -1,6 +1,6 @@
 import React from 'react'
-// Importa el componente directamente desde el archivo raíz
-import KPIWizard from '../mini_app_kpi_mentoria_5_pantallas.jsx'
+// Importa el KPIWizard desde la nueva ruta de feature
+import KPIWizard from '@/features/kpi-wizard'
 
 export default function App() {
   return (

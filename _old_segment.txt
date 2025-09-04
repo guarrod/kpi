@@ -1,0 +1,401 @@
+170: const KPI_DETAILS = {
+171:   // Ejemplos:
+172:   adoption: {
+173:   title: "Tasa de adopci+¶n",
+174:   subtitle: "Mide la velocidad y amplitud de uso de nuevas funcionalidades o productos.",
+175:   html: `
+176:     <div class="space-y-4">
+177:       <p>
+178:         La <strong>Tasa de adopci+¶n</strong> refleja el porcentaje de usuarios o empresas que empiezan a utilizar una nueva
+179:         funcionalidad o producto dentro de un periodo de tiempo espec+°fico (por ejemplo, durante las primeras 
+180:         7, 14 o 30 d+°as tras su lanzamiento). Es un indicador esencial para entender la aceptaci+¶n inicial de 
+181:         una novedad y evaluar si el esfuerzo de desarrollo est+Ì generando el impacto esperado.
+182:       </p>
+183: 
+184:       <div>
+185:         <p class="font-semibold">F+¶rmula:</p>
+186:         <ul class="list-disc list-inside pl-2">
+187:           <li>
+188:             <code>Tasa de adopci+¶n (%) = (N+¶mero de usuarios que adoptan la nueva funcionalidad +¿ 
+189:             Total de usuarios objetivo) +˘ 100</code>
+190:           </li>
+191:         </ul>
+192:       </div>
+193: 
+194:       <div>
+195:         <p class="font-semibold">-+Qu+Æ mide?</p>
+196:         <ul class="list-disc list-inside pl-2">
+197:           <li>La proporci+¶n de clientes que prueban o integran la nueva funcionalidad.</li>
+198:           <li>La efectividad de las campa+¶as de lanzamiento y comunicaci+¶n.</li>
+199:           <li>El nivel de inter+Æs real que genera una mejora o producto en la base de usuarios.</li>
+200:         </ul>
+201:       </div>
+202: 
+203:       <div>
+204:         <p class="font-semibold">Interpretaci+¶n:</p>
+205:         <ul class="list-disc list-inside pl-2">
+206:           <li>Una tasa <strong>alta</strong> indica que la innovaci+¶n responde a una necesidad concreta y ofrece valor claro.</li>
+207:           <li>Una tasa <strong>baja</strong> puede sugerir que los usuarios no perciben el beneficio, que la soluci+¶n no es lo suficientemente simple, o que falta difusi+¶n interna/externa.</li>
+208:         </ul>
+209:       </div>
+210: 
+211:       <div>
+212:         <p class="font-semibold">Frecuencia recomendada de medici+¶n:</p>
+213:         <ul class="list-disc list-inside pl-2">
+214:           <li>Semanal durante el primer mes tras el lanzamiento.</li>
+215:           <li>Mensual para evaluar la consolidaci+¶n del uso.</li>
+216:         </ul>
+217:       </div>
+218:     </div>
+219:   `
+220:   },
+221:   active: {
+222:   title: "Usuarios activos (DAU/MAU)",
+223:   subtitle: "Mide h+Ìbito y recurrencia de uso en ventanas diaria y mensual.",
+224:   html: `
+225:     <div class="space-y-4">
+226:       <p>
+227:         <strong>DAU</strong> (Daily Active Users) y <strong>MAU</strong> (Monthly Active Users) cuantifican cu+Ìntos
+228:         usuarios +¶nicos interact+¶an con el producto en un d+°a o en un mes, respectivamente. En banca empresas,
+229:         ayuda a entender si hay <em>h+Ìbito</em> y recurrencia de uso en tareas clave (p. ej., pagos, consultas de saldos).
+230:       </p>
+231: 
+232:       <div>
+233:         <p class="font-semibold">Definiciones:</p>
+234:         <ul class="list-disc list-inside pl-2">
+235:           <li><strong>DAU:</strong> N+¶mero de usuarios <em>+¶nicos</em> que realizaron al menos una acci+¶n v+Ìlida en un d+°a (login, consulta, transacci+¶n, etc.).</li>
+236:           <li><strong>MAU:</strong> N+¶mero de usuarios <em>+¶nicos</em> que realizaron al menos una acci+¶n v+Ìlida en los +¶ltimos 30 d+°as.</li>
+237:           <li><strong>Stickiness (DAU/MAU):</strong> Relaci+¶n que aproxima la frecuencia de uso mensual. Un mayor valor sugiere h+Ìbito m+Ìs fuerte.</li>
+238:         </ul>
+239:       </div>
+240: 
+241:       <div>
+242:         <p class="font-semibold">F+¶rmulas:</p>
+243:         <ul class="list-disc list-inside pl-2">
+244:           <li><code>DAU = # usuarios +¶nicos activos en D</code></li>
+245:           <li><code>MAU = # usuarios +¶nicos activos en +¶ltimos 30 d+°as</code></li>
+246:           <li><code>Stickiness (%) = (DAU +¿ MAU) +˘ 100</code></li>
+247:         </ul>
+248:       </div>
+249: 
+250:       <div>
+251:         <p class="font-semibold">-+Qu+Æ mide?</p>
+252:         <ul class="list-disc list-inside pl-2">
+253:           <li>La magnitud de la base que realmente usa el canal digital (no solo registrada).</li>
+254:           <li>La frecuencia/constancia con la que vuelven (stickiness).</li>
+255:           <li>Impacto de lanzamientos o campa+¶as en el uso recurrente (picos vs consolidaci+¶n).</li>
+256:         </ul>
+257:       </div>
+258: 
+259:       <div>
+260:         <p class="font-semibold">Interpretaci+¶n y se+¶ales:</p>
+261:         <ul class="list-disc list-inside pl-2">
+262:           <li><strong>DAU alto pero stickiness bajo:</strong> picos por eventos (p. ej. fin de mes) pero poco h+Ìbito diario.</li>
+263:           <li><strong>MAU alto y stickiness creciente:</strong> adopci+¶n sostenida y m+Ìs tareas recurrentes en digital.</li>
+264:           <li><strong>Ca+°das bruscas:</strong> pueden indicar incidentes, fricci+¶n nueva o cambios en procesos (ej. token, KYC).</li>
+265:         </ul>
+266:       </div>
+267: 
+268:       <div>
+269:         <p class="font-semibold">Buenas pr+Ìcticas de medici+¶n:</p>
+270:         <ul class="list-disc list-inside pl-2">
+271:           <li><strong>Evento de ‘«£usuario activo‘«ÿ claro:</strong> define qu+Æ cuenta como actividad v+Ìlida (evitar solo ‘«£abrir app‘«ÿ).</li>
+272:           <li><strong>Segmenta por empresa/rol:</strong> banca empresas tiene m+¶ltiples usuarios por cuenta; segmenta por rol (pagador, aprobador, visor).</li>
+273:           <li><strong>Vista por m+¶dulo:</strong> DAU/MAU global + por funcionalidades clave (p. ej., N+¶mina, Transferencias exterior).</li>
+274:           <li><strong>Normaliza por estacionalidad:</strong> compara semanas equivalentes y controla periodos de cierre/fin de mes.</li>
+275:         </ul>
+276:       </div>
+277: 
+278:       <div>
+279:         <p class="font-semibold">Ejemplo:</p>
+280:         <ul class="list-disc list-inside pl-2">
+281:           <li>En septiembre: <code>MAU = 8.000</code> empresas/usuarios activos.</li>
+282:           <li>Un d+°a t+°pico: <code>DAU = 2.000</code>.</li>
+283:           <li><code>Stickiness = (2.000 +¿ 8.000) +˘ 100 = 25%</code>.</li>
+284:           <li>Si lanzas pagos masivos y sube a 2.600 DAU con 8.200 MAU, <code>stickiness = 31,7%</code> ‘Â∆ h+Ìbito en alza.</li>
+285:         </ul>
+286:       </div>
+287: 
+288:       <div>
+289:         <p class="font-semibold">Alertas y anti-patrones:</p>
+290:         <ul class="list-disc list-inside pl-2">
+291:           <li>No mezclar ‘«£usuarios registrados‘«ÿ con activos: son universos diferentes.</li>
+292:           <li>Evitar contar sesiones m+¶ltiples del mismo usuario como usuarios distintos (asegura unicidad).</li>
+293:           <li>No uses solo DAU o solo MAU: la relaci+¶n DAU/MAU evita lecturas sesgadas.</li>
+294:         </ul>
+295:       </div>
+296:     </div>
+297:     `
+298:   },
+299:   activation: {
+300:   title: "Tasa de activaci+¶n",
+301:   subtitle: "Del registro al primer valor: -+cu+Ìntos llegan a su primera acci+¶n clave?",
+302:   html: `
+303:     <div class="space-y-4">
+304:       <p>
+305:         La <strong>Tasa de activaci+¶n</strong> mide el porcentaje de usuarios/empresas que,
+306:         tras <em>registrarse o habilitar acceso</em>, completan su <strong>primera acci+¶n de valor</strong>
+307:         (p. ej., realizar un pago, cargar n+¶mina, aprobar una transferencia, descargar un estado con +Æxito).
+308:         Es un indicador de si el onboarding y el flujo inicial realmente conducen a valor.
+309:       </p>
+310: 
+311:       <div>
+312:         <p class="font-semibold">Definiciones clave:</p>
+313:         <ul class="list-disc list-inside pl-2">
+314:           <li><strong>Evento de activaci+¶n:</strong> la <em>primera</em> acci+¶n que demuestra valor real (no solo login). Debe ser +¶nica, medible y trazable.</li>
+315:           <li><strong>Ventana de activaci+¶n:</strong> tiempo m+Ìximo considerado desde el alta (p. ej., 7, 14 o 30 d+°as) para contar una activaci+¶n como v+Ìlida.</li>
+316:           <li><strong>Unidad de medida:</strong> por <em>usuario</em> o por <em>empresa</em> (en banca empresas suele medirse a nivel de empresa <em>y</em> a nivel de roles: pagador, aprobador, visor).</li>
+317:         </ul>
+318:       </div>
+319: 
+320:       <div>
+321:         <p class="font-semibold">F+¶rmula:</p>
+322:         <ul class="list-disc list-inside pl-2">
+323:           <li>
+324:             <code>Tasa de activaci+¶n (%) = (N-¶ de cuentas/usuarios que completan el evento de activaci+¶n dentro de la ventana +¿ N-¶ total de nuevos registrados/habilitados) +˘ 100</code>
+325:           </li>
+326:         </ul>
+327:       </div>
+328: 
+329:       <div>
+330:         <p class="font-semibold">-+Qu+Æ mide?</p>
+331:         <ul class="list-disc list-inside pl-2">
+332:           <li>La eficacia del onboarding (configuraci+¶n de token, permisos, l+°mites, KYC) para llevar a la primera acci+¶n de valor.</li>
+333:           <li>La claridad del valor percibido del canal digital para empresas.</li>
+334:           <li>La facilidad de descubrir y ejecutar el flujo inicial clave (p. ej., ‘«£pago simple‘«ÿ o ‘«£carga de n+¶mina‘«ÿ).</li>
+335:         </ul>
+336:       </div>
+337: 
+338:       <div>
+339:         <p class="font-semibold">Interpretaci+¶n:</p>
+340:         <ul class="list-disc list-inside pl-2">
+341:           <li><strong>Alta activaci+¶n:</strong> buen onboarding + propuesta de valor clara + fricci+¶n baja en el primer flujo.</li>
+342:           <li><strong>Baja activaci+¶n:</strong> se+¶ales de fricci+¶n (tokenizaci+¶n, permisos, aprobaciones), valor poco visible, o ventana demasiado corta.</li>
+343:           <li><strong>Tiempo a activaci+¶n (TTA):</strong> usarlo como complemento: d+°as/horas promedio al primer evento de valor.</li>
+344:         </ul>
+345:       </div>
+346: 
+347:       <div>
+348:         <p class="font-semibold">Buenas pr+Ìcticas de medici+¶n:</p>
+349:         <ul class="list-disc list-inside pl-2">
+350:           <li>Define <em>un</em> evento de activaci+¶n por m+¶dulo (p. ej., en n+¶mina ‘«£archivo cargado y pago confirmado‘«ÿ).</li>
+351:           <li>Segmenta por <strong>rol</strong> (pagador, aprobador) y por <strong>tama+¶o de empresa</strong> (micro, pyme, corporativa).</li>
+352:           <li>Elige una <strong>ventana realista</strong> seg+¶n el ciclo del cliente (p. ej., 14 d+°as para pagos, 30 d+°as para n+¶mina).</li>
+353:           <li>Complementa con <strong>embudo de activaci+¶n</strong> (alta ‘Â∆ token ‘Â∆ permisos ‘Â∆ primera transacci+¶n).</li>
+354:         </ul>
+355:       </div>
+356: 
+357:       <div>
+358:         <p class="font-semibold">Ejemplo (empresa):</p>
+359:         <ul class="list-disc list-inside pl-2">
+360:           <li>En 30 d+°as: 1.000 empresas habilitadas.</li>
+361:           <li>Dentro de 14 d+°as: 620 realizan su primer pago o cargan n+¶mina con +Æxito.</li>
+362:           <li><code>Tasa de activaci+¶n = (620 +¿ 1.000) +˘ 100 = 62%</code>.</li>
+363:           <li>Si el <em>Tiempo a activaci+¶n</em> promedio baja de 6 a 3 d+°as tras mejoras de onboarding, vamos en la direcci+¶n correcta.</li>
+364:         </ul>
+365:       </div>
+366: 
+367:       <div>
+368:         <p class="font-semibold">Alertas y anti-patrones:</p>
+369:         <ul class="list-disc list-inside pl-2">
+370:           <li>No contar <strong>login</strong> como activaci+¶n; debe ser una acci+¶n de valor.</li>
+371:           <li>Evitar <strong>ventanas</strong> demasiado cortas (subestiman activaci+¶n) o demasiado largas (diluyen lectura).</li>
+372:           <li>Cuidado con <strong>duplicados</strong> (m+¶ltiples usuarios por empresa) y con <strong>eventos t+Æcnicos</strong> que marcan +Æxito sin que el usuario lo perciba.</li>
+373:         </ul>
+374:       </div>
+375:     </div>
+376:   `
+377:   },
+378:   featureUsage: {
+379:   title: "Uso por funcionalidad",
+380:   subtitle: "Profundidad de uso: -+qu+Æ tanto se usan los distintos m+¶dulos?",
+381:   html: `
+382:     <div class="space-y-4">
+383:       <p>
+384:         El KPI de <strong>Uso por funcionalidad</strong> mide el porcentaje de sesiones o usuarios
+385:         que utilizan una funcionalidad espec+°fica del producto (ej. pagos masivos, transferencias
+386:         internacionales, descarga de certificados). Permite identificar qu+Æ m+¶dulos generan m+Ìs
+387:         valor y cu+Ìles pueden estar infrautilizados.
+388:       </p>
+389: 
+390:       <div>
+391:         <p class="font-semibold">Definici+¶n:</p>
+392:         <ul class="list-disc list-inside pl-2">
+393:           <li>Porcentaje de usuarios o sesiones que usan una funcionalidad sobre el total de usuarios o sesiones en un periodo dado.</li>
+394:           <li>Puede medirse por <em>usuario +¶nico</em> (empresas que al menos una vez usaron la funci+¶n) o por <em>sesiones</em> (veces que la funci+¶n fue usada en relaci+¶n al total de sesiones).</li>
+395:         </ul>
+396:       </div>
+397: 
+398:       <div>
+399:         <p class="font-semibold">F+¶rmula:</p>
+400:         <ul class="list-disc list-inside pl-2">
+401:           <li>
+402:             <code>Uso funcionalidad (%) = (N-¶ de usuarios/sesiones que usaron la funcionalidad +¿ N-¶ total de usuarios/sesiones en el periodo) +˘ 100</code>
+403:           </li>
+404:         </ul>
+405:       </div>
+406: 
+407:       <div>
+408:         <p class="font-semibold">-+Qu+Æ mide?</p>
+409:         <ul class="list-disc list-inside pl-2">
+410:           <li>El nivel de adopci+¶n y relevancia de cada m+¶dulo de la banca empresas.</li>
+411:           <li>La efectividad de las campa+¶as de comunicaci+¶n o lanzamientos de nuevas funciones.</li>
+412:           <li>Oportunidades de simplificaci+¶n: funcionalidades cr+°ticas con bajo uso pueden indicar problemas de discoverability o complejidad.</li>
+413:         </ul>
+414:       </div>
+415: 
+416:       <div>
+417:         <p class="font-semibold">Interpretaci+¶n:</p>
+418:         <ul class="list-disc list-inside pl-2">
+419:           <li><strong>Alto uso:</strong> la funcionalidad es percibida como valiosa y probablemente resuelve una necesidad recurrente.</li>
+420:           <li><strong>Bajo uso:</strong> puede deberse a que los usuarios no conocen la funci+¶n, no conf+°an en ella o encuentran fricci+¶n en el acceso.</li>
+421:           <li>Un cambio en la interfaz que aumenta el uso puede ser evidencia de mejora en la experiencia de descubrimiento.</li>
+422:         </ul>
+423:       </div>
+424: 
+425:       <div>
+426:         <p class="font-semibold">Buenas pr+Ìcticas:</p>
+427:         <ul class="list-disc list-inside pl-2">
+428:           <li>Medir el uso por <strong>segmento</strong> (tipo de empresa, rol de usuario, sector).</li>
+429:           <li>Complementar con <strong>encuestas cualitativas</strong> para entender por qu+Æ no se usa una funci+¶n cr+°tica.</li>
+430:           <li>Relacionar con m+Ætricas de <strong>adopci+¶n y retenci+¶n</strong> para identificar correlaciones (ej. empresas que usan 3+ funcionalidades tienden a quedarse m+Ìs tiempo).</li>
+431:         </ul>
+432:       </div>
+433: 
+434:       <div>
+435:         <p class="font-semibold">Ejemplo:</p>
+436:         <ul class="list-disc list-inside pl-2">
+437:           <li>En un mes: 10.000 usuarios activos en banca empresas.</li>
+438:           <li>De ellos, 3.200 usaron la funcionalidad ‘«£pagos masivos‘«ÿ.</li>
+439:           <li><code>Uso pagos masivos = (3.200 +¿ 10.000) +˘ 100 = 32%</code>.</li>
+440:           <li>Si tras mejorar la visibilidad del acceso sube a 4.800 usuarios, el uso escala a 48% ‘Â∆ evidencia de impacto positivo.</li>
+441:         </ul>
+442:       </div>
+443:     </div>
+444:   `
+445:   },
+446:   timeOnTask: {
+447:   title: "Tiempo en tarea",
+448:   subtitle: "Eficiencia y fricci+¶n: -+cu+Ìnto tarda un usuario en completar una acci+¶n clave?",
+449:   html: `
+450:     <div class="space-y-4">
+451:       <p>
+452:         El KPI de <strong>Tiempo en tarea</strong> mide la duraci+¶n promedio que un usuario emplea
+453:         para completar un flujo o acci+¶n clave en el sistema (ej. realizar una transferencia,
+454:         cargar n+¶mina, descargar un estado de cuenta). Es un indicador central de eficiencia y
+455:         facilidad de uso.
+456:       </p>
+457: 
+458:       <div>
+459:         <p class="font-semibold">Definici+¶n:</p>
+460:         <ul class="list-disc list-inside pl-2">
+461:           <li>Tiempo promedio (mediana p50 y, opcionalmente, percentil p90) desde el inicio hasta la confirmaci+¶n de una tarea.</li>
+462:           <li>Se mide en segundos o minutos, dependiendo del tipo de flujo.</li>
+463:           <li>Debe excluir tiempos de inactividad prolongada para no sesgar el dato.</li>
+464:         </ul>
+465:       </div>
+466: 
+467:       <div>
+468:         <p class="font-semibold">F+¶rmula:</p>
+469:         <ul class="list-disc list-inside pl-2">
+470:           <li>
+471:             <code>Tiempo en tarea = (+˙ tiempos de finalizaci+¶n de la tarea +¿ N-¶ de tareas completadas)</code>
+472:           </li>
+473:           <li>Recomendado: reportar <code>p50</code> y <code>p90</code> en lugar de solo el promedio, para reflejar variabilidad.</li>
+474:         </ul>
+475:       </div>
+476: 
+477:       <div>
+478:         <p class="font-semibold">-+Qu+Æ mide?</p>
+479:         <ul class="list-disc list-inside pl-2">
+480:           <li>La eficiencia del flujo de usuario.</li>
+481:           <li>La claridad de la interfaz y los pasos necesarios para completar la acci+¶n.</li>
+482:           <li>El impacto de cambios en dise+¶o o performance en la productividad del usuario.</li>
+483:         </ul>
+484:       </div>
+485: 
+486:       <div>
+487:         <p class="font-semibold">Interpretaci+¶n:</p>
+488:         <ul class="list-disc list-inside pl-2">
+489:           <li><strong>Tiempos bajos:</strong> procesos optimizados y simples.</li>
+490:           <li><strong>Tiempos altos:</strong> indicio de fricci+¶n, pasos innecesarios, carga lenta o errores frecuentes.</li>
+491:           <li>Comparar entre <strong>nuevos</strong> y <strong>usuarios recurrentes</strong> ayuda a detectar problemas de aprendizaje vs problemas de dise+¶o.</li>
+492:         </ul>
+493:       </div>
+494: 
+495:       <div>
+496:         <p class="font-semibold">Buenas pr+Ìcticas de medici+¶n:</p>
+497:         <ul class="list-disc list-inside pl-2">
+498:           <li>Definir claramente inicio y fin de cada tarea (ej. clic en ‘«£Nueva transferencia‘«ÿ ‘Â∆ confirmaci+¶n exitosa).</li>
+499:           <li>Registrar tanto el <strong>tiempo activo</strong> como los posibles <strong>tiempos de espera del sistema</strong>.</li>
+500:           <li>Complementar con <strong>eventos de error</strong> para detectar si los tiempos altos est+Ìn vinculados a fallos.</li>
+501:           <li>Comparar despu+Æs de <strong>redise+¶os o mejoras</strong> para validar impacto.</li>
+502:         </ul>
+503:       </div>
+504: 
+505:       <div>
+506:         <p class="font-semibold">Ejemplo:</p>
+507:         <ul class="list-disc list-inside pl-2">
+508:           <li>En un mes: 1.200 operaciones de carga de n+¶mina.</li>
+509:           <li>Mediana (p50): 2 min 10 s.</li>
+510:           <li>Percentil 90 (p90): 4 min 30 s.</li>
+511:           <li>Tras optimizar validaciones, el p50 baj+¶ a 1 min 20 s y el p90 a 2 min 45 s ‘Â∆ evidencia clara de mejora en eficiencia.</li>
+512:         </ul>
+513:       </div>
+514: 
+515:       <div>
+516:         <p class="font-semibold">Alertas y anti-patrones:</p>
+517:         <ul class="list-disc list-inside pl-2">
+518:           <li>No confundir tiempo bajo con buena experiencia: un tiempo muy corto puede indicar que el usuario abandon+¶ o cometi+¶ un error sin completar.</li>
+519:           <li>No usar solo promedio: puede ocultar casos extremos donde pocos usuarios sufren fricci+¶n severa.</li>
+520:         </ul>
+521:       </div>
+522:     </div>
+523:   `
+524:   },
+525:   success: {
+526:   title: "Tasa de +Æxito",
+527:   subtitle: "Eficiencia & Fricci+¶n: -+cu+Ìntas operaciones se completan sin problemas?",
+528:   html: `
+529:     <div class="space-y-4">
+530:       <p>
+531:         La <strong>Tasa de +Æxito</strong> mide el porcentaje de operaciones o tareas que los usuarios logran
+532:         completar sin errores, bloqueos o necesidad de repetir pasos. En banca empresas es un KPI clave
+533:         para evaluar la <em>confiabilidad y usabilidad de los flujos cr+°ticos</em> como transferencias,
+534:         pagos masivos o apertura de cuentas.
+535:       </p>
+536: 
+537:       <div>
+538:         <p class="font-semibold">Definici+¶n:</p>
+539:         <ul class="list-disc list-inside pl-2">
+540:           <li>Proporci+¶n de operaciones iniciadas que llegan a completarse correctamente.</li>
+541:           <li>Se considera +Æxito cuando el sistema confirma la operaci+¶n y el usuario percibe que se logr+¶ el objetivo.</li>
+542:           <li>Incluye la reducci+¶n de <strong>reintentos</strong> y de errores de validaci+¶n o t+Æcnicos.</li>\n          </ul>
+543:       </div>
+544: 
+545:       <div>
+546:         <p class="font-semibold">F+¶rmula:</p>
+547:         <ul class="list-disc list-inside pl-2">
+548:           <li><code>Tasa de +Æxito (%) = (N-¶ de operaciones completadas exitosamente +¿ N-¶ total de operaciones iniciadas) +˘ 100</code></li>
+549:         </ul>
+550:       </div>
+551: 
+552:       <div>
+553:         <p class="font-semibold">-+Qu+Æ mide?</p>
+554:         <ul class="list-disc list-inside pl-2">
+555:           <li>La capacidad del sistema para permitir que los usuarios completen sus objetivos.</li>
+556:           <li>La solidez de los flujos de negocio frente a fricciones t+Æcnicas o de dise+¶o.</li>
+557:           <li>El impacto de mejoras de UX en la reducci+¶n de errores y ca+°das.</li>
+558:         </ul>
+559:       </div>
+560: 
+561:       <div>
+562:         <p class="font-semibold">Interpretaci+¶n:</p>
+563:         <ul class="list-disc list-inside pl-2">
+564:           <li><strong>Tasa alta (&gt;95%):</strong> indica que la mayor+°a de los usuarios logran completar sus operaciones sin problemas.</li>
+565:           <li><strong>Tasa baja (&lt;90%):</strong> alerta sobre fricciones cr+°ticas: errores t+Æcnicos, validaciones confusas, problemas de dise+¶o o flujos poco claros.</li>
+566:           <li>Un aumento sostenido en la tasa tras un redise+¶o es evidencia fuerte de mejora de la experiencia.</li>
+567:         </ul>
+568:       </div>
+569: 
+570:       <div>
