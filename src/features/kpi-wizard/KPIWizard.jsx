@@ -3,6 +3,7 @@ import { AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -14,6 +15,7 @@ import StepSelectKPIs from "./steps/StepSelectKPIs";
 import StepTargets from "./steps/StepTargets";
 import StepSummary from "./steps/StepSummary";
 import KPI_DETAILS from "./kpi-details";
+import { createRun, saveRun, loadRun } from "./runs-storage";
 
 // Helpers puros
 const computeQuarter = (d = new Date()) => {
@@ -142,8 +144,22 @@ const CATEGORIES = [
   "Salud técnica",
 ];
 
+async function sha256Base64(str) {
+  try {
+    const enc = new TextEncoder();
+    const buf = await crypto.subtle.digest("SHA-256", enc.encode(str));
+    const bytes = new Uint8Array(buf);
+    let bin = "";
+    for (let i = 0; i < bytes.byteLength; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  } catch {
+    return "";
+  }
+}
+
 export default function KPIWizard() {
   const [step, setStep] = React.useState(0);
+  const [runId, setRunId] = React.useState(null);
   const [service, setService] = React.useState("");
   const [bizGoal, setBizGoal] = React.useState("");
   const [userGoal, setUserGoal] = React.useState("");
@@ -217,6 +233,20 @@ export default function KPIWizard() {
     setSelected({});
   };
 
+  const startNewRun = () => {
+    if (typeof window === 'undefined') {
+      resetAll();
+      return;
+    }
+    const prevService = service;
+    const newId = createRun({ title: prevService || '(sin nombre)' });
+    setRunId(newId);
+    const url = new URL(window.location.href);
+    url.searchParams.set('run', newId);
+    window.history.replaceState({}, '', url.toString());
+    resetAll();
+  };
+
   const summary = () =>
     buildSummary(
       selected,
@@ -248,7 +278,9 @@ export default function KPIWizard() {
   };
 
   const finalize = async () => {
-    const data = { ...summary(), timestamp: new Date().toISOString() };
+    const core = summary();
+    const payloadHash = await sha256Base64(JSON.stringify(core));
+    const data = { id: runId, ...core, payloadHash, timestamp: new Date().toISOString() };
     try {
       const key = "kpi_wizard_runs";
       const prev = JSON.parse(localStorage.getItem(key) || "[]");
@@ -266,30 +298,35 @@ export default function KPIWizard() {
     }
 
     const onSuccess = () => {
+      try {
+        const snap = snapshot();
+        saveRun(runId, { ...snap, status: 'sent' }, { title: service || '(sin nombre)' });
+      } catch {}
       if (setToast) {
         setToast("OK. KPIs enviados");
         setTimeout(() => {
-          if (React.startTransition) {
-            React.startTransition(() => resetAll());
-          } else {
-            resetAll();
-          }
+          if (React.startTransition) { React.startTransition(() => startNewRun()); }
+          else { startNewRun(); }
           setToast(null);
         }, 0);
       } else {
-        if (React.startTransition) {
-          React.startTransition(() => resetAll());
-        } else {
-          resetAll();
-        }
+        if (React.startTransition) { React.startTransition(() => startNewRun()); }
+        else { startNewRun(); }
       }
     };
 
     try {
       const json = JSON.stringify(data);
       if (navigator.sendBeacon) {
+        const url = (() => {
+          try {
+            const u = new URL(ENDPOINT, window.location.href);
+            u.searchParams.set('ua', navigator.userAgent || '');
+            return u.toString();
+          } catch { return ENDPOINT; }
+        })();
         const ok = navigator.sendBeacon(
-          ENDPOINT,
+          url,
           new Blob([json], { type: "text/plain;charset=UTF-8" })
         );
         if (ok) {
@@ -297,7 +334,14 @@ export default function KPIWizard() {
           return;
         }
       }
-      await fetch(ENDPOINT, { method: "POST", mode: "no-cors", body: json });
+      const postUrl = (() => {
+        try {
+          const u = new URL(ENDPOINT, window.location.href);
+          u.searchParams.set('ua', navigator.userAgent || '');
+          return u.toString();
+        } catch { return ENDPOINT; }
+      })();
+      await fetch(postUrl, { method: "POST", mode: "no-cors", body: json });
       onSuccess();
     } catch (e) {
       if (setToast) {
@@ -318,15 +362,109 @@ export default function KPIWizard() {
     </div>
   );
 
+  // ----- Autosave helpers -----
+  const snapshot = React.useCallback(() => ({
+    id: runId,
+    step,
+    service,
+    bizGoal,
+    userGoal,
+    notes,
+    tasks,
+    selected,
+    status: "draft",
+  }), [runId, step, service, bizGoal, userGoal, notes, tasks, selected]);
+
+  // Initialize run: load from URL ?run= or create new
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    const existing = url.searchParams.get('run');
+    if (existing) {
+      const saved = loadRun(existing);
+      if (saved) {
+        setRunId(existing);
+        setStep(saved.step ?? 0);
+        setService(saved.service ?? "");
+        setBizGoal(saved.bizGoal ?? "");
+        setUserGoal(saved.userGoal ?? "");
+        setNotes(saved.notes ?? "");
+        setTasks(Array.isArray(saved.tasks) ? saved.tasks : ["", ""]);
+        setSelected(saved.selected || {});
+        return;
+      }
+    }
+    const id = createRun({ title: service || "(sin nombre)" });
+    setRunId(id);
+    url.searchParams.set('run', id);
+    window.history.replaceState({}, '', url.toString());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Throttled autosave on changes
+  const saveRef = React.useRef({ timer: null, lastHash: "" });
+  React.useEffect(() => {
+    if (!runId) return;
+    const data = snapshot();
+    const hash = JSON.stringify(data);
+    if (saveRef.current.lastHash === hash) return;
+    if (saveRef.current.timer) clearTimeout(saveRef.current.timer);
+    saveRef.current.timer = setTimeout(() => {
+      try {
+        saveRun(runId, data, { title: service || '(sin nombre)' });
+        saveRef.current.lastHash = hash;
+        // console.debug('Autosaved run', runId);
+      } catch (e) {
+        // console.warn('Autosave failed', e);
+      }
+    }, 1500);
+    return () => {
+      if (saveRef.current.timer) clearTimeout(saveRef.current.timer);
+    };
+  }, [runId, service, bizGoal, userGoal, notes, tasks, selected, step, snapshot]);
+
+  // Flush save on page hide/unload
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const flush = () => {
+      if (!runId) return;
+      try {
+        const data = snapshot();
+        saveRun(runId, data, { title: service || '(sin nombre)' });
+        saveRef.current.lastHash = JSON.stringify(data);
+      } catch {}
+    };
+    const onVis = () => { if (document.visibilityState === 'hidden') flush(); };
+    window.addEventListener('visibilitychange', onVis);
+    window.addEventListener('pagehide', flush);
+    window.addEventListener('beforeunload', flush);
+    return () => {
+      window.removeEventListener('visibilitychange', onVis);
+      window.removeEventListener('pagehide', flush);
+      window.removeEventListener('beforeunload', flush);
+    };
+  }, [runId, snapshot, service]);
+
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold tracking-tight">Mentoría KPI – Wizard</h1>
         <div className="flex items-center gap-3 text-sm text-gray-500">
           <span>Pantalla {step + 1} de 5</span>
-          <div className="w-40">
-            <Progress value={progress} />
-          </div>
+          <div className="w-40"><Progress value={progress} /></div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="ml-2 gap-2"
+            onClick={() => {
+              if (window.confirm('¿Resetear el flujo actual? Se perderán los cambios no enviados.')) {
+                startNewRun();
+              }
+            }}
+            title="Resetear y empezar desde cero"
+          >
+            <RefreshCw className="h-4 w-4" /> Resetear
+          </Button>
         </div>
       </div>
 
