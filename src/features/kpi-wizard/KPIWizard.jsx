@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   ArrowRight,
   RefreshCw,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -170,6 +171,7 @@ export default function KPIWizard() {
   const [selected, setSelected] = React.useState({});
   const [toast, setToast] = React.useState(null);
   const [info, setInfo] = React.useState({ open: false, url: "", title: "", id: "" });
+  const [successOpen, setSuccessOpen] = React.useState(false);
 
   const progress = ((step + 1) / 5) * 100;
   const filteredKPIs = filterKPIsHelper(KPI_CATALOG_WITH_URL, filterCats, search);
@@ -290,10 +292,8 @@ export default function KPIWizard() {
 
     const ENDPOINT = import.meta.env.VITE_KPI_ENDPOINT;
     if (!ENDPOINT) {
-      if (setToast) {
-        setToast("Falta configurar VITE_KPI_ENDPOINT (.env.production)");
-        setTimeout(() => setToast(null), 4000);
-      }
+      // Si no hay endpoint configurado, igual mostramos el modal de éxito
+      setSuccessOpen(true);
       return;
     }
 
@@ -302,17 +302,8 @@ export default function KPIWizard() {
         const snap = snapshot();
         saveRun(runId, { ...snap, status: 'sent' }, { title: service || '(sin nombre)' });
       } catch {}
-      if (setToast) {
-        setToast("OK. KPIs enviados");
-        setTimeout(() => {
-          if (React.startTransition) { React.startTransition(() => startNewRun()); }
-          else { startNewRun(); }
-          setToast(null);
-        }, 0);
-      } else {
-        if (React.startTransition) { React.startTransition(() => startNewRun()); }
-        else { startNewRun(); }
-      }
+      // Abrir modal de éxito en lugar de reiniciar automáticamente
+      setSuccessOpen(true);
     };
 
     try {
@@ -615,6 +606,38 @@ export default function KPIWizard() {
                   No hay URL disponible para este KPI.
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {successOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+          onClick={() => setSuccessOpen(false)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                <CheckCircle2 className="w-7 h-7 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold">Éxito en el seguimiento de tus KPI</h3>
+              <p className="text-sm text-gray-600">Tu configuración quedó guardada correctamente.</p>
+              <div className="flex gap-2 mt-2">
+                <Button
+                  className="gap-2"
+                  onClick={() => {
+                    setSuccessOpen(false);
+                    startNewRun();
+                  }}
+                >
+                  Crear nuevo
+                </Button>
+                <Button variant="outline" onClick={() => setSuccessOpen(false)}>Cerrar</Button>
+              </div>
             </div>
           </div>
         </div>
