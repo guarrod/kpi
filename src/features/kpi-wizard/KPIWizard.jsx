@@ -448,7 +448,7 @@ export default function KPIWizard() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold tracking-tight">Mentoría KPI – Wizard</h1>
+        <h1 className="text-2xl font-bold tracking-tight">KPI-o-matic</h1>
         <div className="flex items-center gap-3 text-sm text-gray-500">
           <span>Pantalla {step + 1} de 5</span>
           <div className="w-40"><Progress value={progress} /></div>

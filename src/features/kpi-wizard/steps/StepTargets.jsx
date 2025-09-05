@@ -13,6 +13,22 @@ export default function StepTargets({
   setInfo,
   resolveKpiUrl,
 }) {
+  const count = Object.keys(selected).length;
+  const getValidation = (n) => {
+    if (n === 0) return { text: 'Falta foco: aún no han elegido.', tone: 'neutral' };
+    if (n <= 3) return { text: 'Ideal: foco nítido para iterar rápido.', tone: 'success' };
+    if (n <= 6) return { text: 'Bien, pero vigilen la dispersión.', tone: 'info' };
+    if (n <= 10) return { text: 'Muchos: alto riesgo de diluir esfuerzos.', tone: 'warn' };
+    return { text: '⚠️ Exceso: re-evaluar y priorizar.', tone: 'danger' };
+  };
+  const v = getValidation(count);
+  const toneClasses = {
+    neutral: 'bg-gray-50 border-gray-200 text-gray-700',
+    success: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+    info: 'bg-amber-50 border-amber-200 text-amber-800',
+    warn: 'bg-orange-50 border-orange-200 text-orange-800',
+    danger: 'bg-red-50 border-red-200 text-red-700',
+  };
   return (
     <Card className="shadow-sm rounded-2xl">
       <CardHeader>
@@ -23,10 +39,12 @@ export default function StepTargets({
         />
       </CardHeader>
       <CardContent className="space-y-4">
-        {Object.keys(selected).length === 0 && (
-          <p className="text-sm text-gray-500">
-            Primero selecciona KPIs en la pantalla anterior.
-          </p>
+        <div className={`text-sm px-3 py-2 rounded border ${toneClasses[v.tone]}`}>
+          <span className="font-medium mr-2">Selección: {count} KPI(s).</span>
+          <span>{v.text}</span>
+        </div>
+        {count === 0 && (
+          <p className="text-sm text-gray-500">Primero selecciona KPIs en la pantalla anterior.</p>
         )}
         {Object.keys(selected).map((id) => {
           const k = kpiCatalogWithUrl.find((x) => x.id === id);
@@ -73,20 +91,20 @@ export default function StepTargets({
                     onChange={(e) => updateSelected(id, "target", e.target.value)}
                   />
                 </div>
-                <div>
+                {/* <div>
                   <Label>Liberación</Label>
                   <Input
                     placeholder="Momento estimado para liberar (opcional)"
                     value={selected[id].timeframe || ""}
                     onChange={(e) => updateSelected(id, "timeframe", e.target.value)}
                   />
-                </div>
+                </div> */}
               </div>
             </div>
           );
         })}
+        
       </CardContent>
     </Card>
   );
 }
-

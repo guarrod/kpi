@@ -1933,7 +1933,7 @@ const KPI_DETAILS = {
   </div>
   `
   },
-  twoFA: {
+  twoFa: {
   title: "2FA éxito",
   subtitle: "Seguridad & Cumplimiento: efectividad de la autenticación de dos factores",
   html: `

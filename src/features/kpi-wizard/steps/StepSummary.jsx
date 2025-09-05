@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Copy, RefreshCw, CheckCircle2 } from "lucide-react";
 import SectionTitle from "../components/SectionTitle";
+import { toPng } from "html-to-image";
 
 export default function StepSummary({
   service,
@@ -19,8 +20,37 @@ export default function StepSummary({
   copyMarkdown,
   resetAll,
 }) {
+  const captureRef = React.useRef(null);
+
+  const downloadAsImage = async () => {
+    const node = captureRef.current;
+    if (!node) return;
+    try {
+      const dataUrl = await toPng(node, {
+        cacheBust: true,
+        backgroundColor: "#ffffff",
+        pixelRatio: Math.min(2, window.devicePixelRatio || 1),
+        filter: (n) => {
+          if (!(n instanceof Element)) return true;
+          const s = window.getComputedStyle(n);
+          return !(s && /url\(/i.test(s.backgroundImage || ""));
+        },
+      });
+      const a = document.createElement("a");
+      const name = `kpi-resumen-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.png`;
+      a.download = name;
+      a.href = dataUrl;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (e) {
+      alert("No se pudo generar la imagen PNG.");
+    }
+  };
+
   return (
-    <Card className="shadow-sm rounded-2xl">
+    <div ref={captureRef}>
+      <Card className="shadow-sm rounded-2xl">
       <CardHeader>
         <SectionTitle
           icon={CheckCircle2}
@@ -105,9 +135,6 @@ export default function StepSummary({
                       <div>
                         <span className="text-gray-500">Meta:</span> {meta.target || <i>—</i>}
                       </div>
-                      <div>
-                        <span className="text-gray-500">Liberación:</span> {meta.timeframe || <i>—</i>}
-                      </div>
                     </div>
                   </div>
                 );
@@ -120,12 +147,15 @@ export default function StepSummary({
           <Button onClick={copyMarkdown} className="gap-2">
             <Copy className="h-4 w-4" /> Copiar resumen (Markdown)
           </Button>
-          <Button variant="secondary" onClick={resetAll} className="gap-2">
-            <RefreshCw className="h-4 w-4" /> Nuevo servicio
+          <Button onClick={downloadAsImage} className="gap-2" variant="outline">
+            Descargar imagen (PNG)
           </Button>
+          {/* <Button variant="secondary" onClick={resetAll} className="gap-2">
+            <RefreshCw className="h-4 w-4" /> Nuevo servicio
+          </Button> */}
         </div>
       </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 }
-
