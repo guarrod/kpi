@@ -19,3 +19,8 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# Server
+server/.env
+server/data/
+server/node_modules/
+

@@ -290,55 +290,30 @@ export default function KPIWizard() {
       localStorage.setItem(key, JSON.stringify(prev));
     } catch (e) {}
 
-    const ENDPOINT = import.meta.env.VITE_KPI_ENDPOINT;
-    if (!ENDPOINT) {
-      // Si no hay endpoint configurado, igual mostramos el modal de éxito
-      setSuccessOpen(true);
-      return;
-    }
+    const API_BASE = `${import.meta.env.BASE_URL}api`;
+    const TOKEN = import.meta.env.VITE_API_TOKEN;
 
     const onSuccess = () => {
       try {
         const snap = snapshot();
         saveRun(runId, { ...snap, status: 'sent' }, { title: service || '(sin nombre)' });
       } catch {}
-      // Abrir modal de éxito en lugar de reiniciar automáticamente
       setSuccessOpen(true);
     };
 
     try {
-      const json = JSON.stringify(data);
-      if (navigator.sendBeacon) {
-        const url = (() => {
-          try {
-            const u = new URL(ENDPOINT, window.location.href);
-            u.searchParams.set('ua', navigator.userAgent || '');
-            return u.toString();
-          } catch { return ENDPOINT; }
-        })();
-        const ok = navigator.sendBeacon(
-          url,
-          new Blob([json], { type: "text/plain;charset=UTF-8" })
-        );
-        if (ok) {
-          onSuccess();
-          return;
-        }
-      }
-      const postUrl = (() => {
-        try {
-          const u = new URL(ENDPOINT, window.location.href);
-          u.searchParams.set('ua', navigator.userAgent || '');
-          return u.toString();
-        } catch { return ENDPOINT; }
-      })();
-      await fetch(postUrl, { method: "POST", mode: "no-cors", body: json });
+      const headers = { 'Content-Type': 'application/json' };
+      if (TOKEN) headers['Authorization'] = `Bearer ${TOKEN}`;
+      const res = await fetch(`${API_BASE}/runs`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       onSuccess();
     } catch (e) {
-      if (setToast) {
-        setToast("Error al enviar. Revisa la consola.");
-        setTimeout(() => setToast(null), 4000);
-      }
+      setToast("Error al enviar. Revisa la consola.");
+      setTimeout(() => setToast(null), 4000);
     }
   };
 

@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "node --watch server/index.js",
     "build": "vite build",
+    "build:prod": "vite build --base=/kpi/",
     "build:pages": "vite build --base=/kpi/ --outDir=docs",
     "postbuild:pages": "node -e \"const fs=require('fs');fs.copyFileSync('docs/index.html','docs/404.html')\"",
     "preview": "vite preview"
