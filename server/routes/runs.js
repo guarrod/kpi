@@ -30,4 +30,10 @@ router.get('/:id', (req, res) => {
   res.json(JSON.parse(row.payload));
 });
 
+router.delete('/:id', (req, res) => {
+  const { changes } = db.prepare('DELETE FROM runs WHERE id = ?').run(req.params.id);
+  if (!changes) return res.status(404).json({ error: 'not found' });
+  res.json({ ok: true });
+});
+
 module.exports = router;
