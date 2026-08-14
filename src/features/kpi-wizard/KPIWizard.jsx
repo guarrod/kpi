@@ -10,13 +10,24 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
 import Fade from "./components/Fade";
-import StepService from "./steps/StepService";
-import StepMVP from "./steps/StepMVP";
+import StepAlignment from "./steps/StepAlignment";
 import StepSelectKPIs from "./steps/StepSelectKPIs";
 import StepTargets from "./steps/StepTargets";
 import StepSummary from "./steps/StepSummary";
 import KPI_DETAILS from "./kpi-details";
-import { createRun, saveRun, loadRun } from "./runs-storage";
+import { createRun, saveRun, loadRun, RUN_SCHEMA_VERSION } from "./runs-storage";
+
+// Pasos del flujo: alineación+tareas, selección, metas, resumen
+const STEP_COUNT = 4;
+const LAST_STEP = STEP_COUNT - 1;
+
+// Los runs guardados antes de fusionar objetivos y tareas usaban 5 pasos:
+// el viejo paso 1 (tareas) ahora vive dentro del 0, así que todo se corre uno.
+const migrateStep = (saved) => {
+  const step = saved.step ?? 0;
+  const migrated = saved.v >= 2 ? step : Math.max(0, step - 1);
+  return Math.min(migrated, LAST_STEP);
+};
 
 // Helpers puros
 const computeQuarter = (d = new Date()) => {
@@ -173,7 +184,7 @@ export default function KPIWizard() {
   const [info, setInfo] = React.useState({ open: false, url: "", title: "", id: "" });
   const [successOpen, setSuccessOpen] = React.useState(false);
 
-  const progress = ((step + 1) / 5) * 100;
+  const progress = ((step + 1) / STEP_COUNT) * 100;
   const filteredKPIs = filterKPIsHelper(KPI_CATALOG_WITH_URL, filterCats, search);
 
   const KPI_BASE = import.meta?.env?.VITE_KPI_BASE_URL || "";
@@ -319,7 +330,7 @@ export default function KPIWizard() {
 
   const Stepper = () => (
     <div className="flex items-center gap-2 mb-6">
-      {[0, 1, 2, 3, 4].map((i) => (
+      {Array.from({ length: STEP_COUNT }, (_, i) => i).map((i) => (
         <div
           key={i}
           className={`h-2 flex-1 rounded-full ${i <= step ? "bg-magno-600" : "bg-gray-200"}`}
@@ -331,6 +342,7 @@ export default function KPIWizard() {
   // ----- Autosave helpers -----
   const snapshot = React.useCallback(() => ({
     id: runId,
+    v: RUN_SCHEMA_VERSION,
     step,
     service,
     bizGoal,
@@ -350,7 +362,7 @@ export default function KPIWizard() {
       const saved = loadRun(existing);
       if (saved) {
         setRunId(existing);
-        setStep(saved.step ?? 0);
+        setStep(migrateStep(saved));
         setService(saved.service ?? "");
         setBizGoal(saved.bizGoal ?? "");
         setUserGoal(saved.userGoal ?? "");
@@ -414,9 +426,9 @@ export default function KPIWizard() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold tracking-tight">KPI-o-matic</h1>
+        <h1 className="text-2xl font-bold tracking-tight">KPI Framework</h1>
         <div className="flex items-center gap-3 text-sm text-gray-500">
-          <span>Pantalla {step + 1} de 5</span>
+          <span>Pantalla {step + 1} de {STEP_COUNT}</span>
           <div className="w-40"><Progress value={progress} /></div>
           <Button
             variant="outline"
@@ -439,7 +451,7 @@ export default function KPIWizard() {
       <AnimatePresence mode="wait">
         {step === 0 && (
           <Fade key="s1">
-            <StepService
+            <StepAlignment
               service={service}
               setService={setService}
               bizGoal={bizGoal}
@@ -448,13 +460,6 @@ export default function KPIWizard() {
               setUserGoal={setUserGoal}
               notes={notes}
               setNotes={setNotes}
-            />
-          </Fade>
-        )}
-
-        {step === 1 && (
-          <Fade key="s2">
-            <StepMVP
               tasks={tasks}
               addTask={addTask}
               removeTask={removeTask}
@@ -463,8 +468,8 @@ export default function KPIWizard() {
           </Fade>
         )}
 
-        {step === 2 && (
-          <Fade key="s3">
+        {step === 1 && (
+          <Fade key="s2">
             <StepSelectKPIs
               search={search}
               setSearch={setSearch}
@@ -480,8 +485,8 @@ export default function KPIWizard() {
           </Fade>
         )}
 
-        {step === 3 && (
-          <Fade key="s4">
+        {step === 2 && (
+          <Fade key="s3">
             <StepTargets
               selected={selected}
               kpiCatalogWithUrl={KPI_CATALOG_WITH_URL}
@@ -492,8 +497,8 @@ export default function KPIWizard() {
           </Fade>
         )}
 
-        {step === 4 && (
-          <Fade key="s5">
+        {step === 3 && (
+          <Fade key="s4">
             <StepSummary
               service={service}
               bizGoal={bizGoal}
@@ -523,10 +528,12 @@ export default function KPIWizard() {
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-400">{Object.keys(selected).length} KPIs</span>
           <Button
-            onClick={() => (step === 4 ? finalize() : setStep((s) => Math.min(4, s + 1)))}
+            onClick={() =>
+              step === LAST_STEP ? finalize() : setStep((s) => Math.min(LAST_STEP, s + 1))
+            }
             className="gap-2"
           >
-            {step === 4 ? "Finalizar" : "Siguiente"} <ArrowRight className="h-4 w-4" />
+            {step === LAST_STEP ? "Finalizar" : "Siguiente"} <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
       </div>

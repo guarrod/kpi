@@ -34,7 +34,7 @@ export default function StepTargets({
       <CardHeader>
         <SectionTitle
           icon={LineChart}
-          title="4) Baseline y meta"
+          title="3) Baseline y meta"
           subtitle="Define punto de partida y objetivo por KPI seleccionado"
         />
       </CardHeader>

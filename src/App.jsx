@@ -10,7 +10,7 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <header className="border-b bg-white sticky top-0 z-10 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-          <span className="font-bold text-magno-500 tracking-tight">KPI Wizard</span>
+          <span className="font-bold text-magno-500 tracking-tight">KPI Framework</span>
           <nav className="flex gap-1 p-1 bg-gray-100 rounded-xl">
             <button
               onClick={() => setView('wizard')}

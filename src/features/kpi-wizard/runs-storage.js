@@ -2,6 +2,10 @@
 const INDEX_KEY = 'kpi_runs_index';
 const RUN_PREFIX = 'kpi_run:';
 
+// v2: objetivos y tareas se fusionaron en un solo paso inicial (5 pasos -> 4).
+// Los runs sin `v` son v1 y se migran al cargarlos.
+export const RUN_SCHEMA_VERSION = 2;
+
 function safeGetItem(key) {
   try { return localStorage.getItem(key); } catch { return null; }
 }
@@ -29,7 +33,7 @@ export function createRun(meta = {}) {
   index.unshift({ id, title: meta.title || '(sin nombre)', status: 'draft', updatedAt: now });
   writeIndex(index);
   // Initialize empty payload
-  const payload = { id, step: 0, service: '', bizGoal: '', userGoal: '', notes: '', tasks: ["",""], selected: {}, status: 'draft', updatedAt: now };
+  const payload = { id, v: RUN_SCHEMA_VERSION, step: 0, service: '', bizGoal: '', userGoal: '', notes: '', tasks: ["",""], selected: {}, status: 'draft', updatedAt: now };
   safeSetItem(RUN_PREFIX + id, JSON.stringify(payload));
   return id;
 }

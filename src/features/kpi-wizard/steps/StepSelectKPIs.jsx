@@ -23,7 +23,7 @@ export default function StepSelectKPIs({
       <CardHeader>
         <SectionTitle
           icon={ListChecks}
-          title="3) Selección de KPIs"
+          title="2) Selección de KPIs"
           subtitle="Marca los KPIs relevantes (relevancia, medibilidad y accionabilidad)"
         />
       </CardHeader>

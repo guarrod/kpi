@@ -54,7 +54,7 @@ export default function StepSummary({
       <CardHeader>
         <SectionTitle
           icon={CheckCircle2}
-          title="5) Resumen y confirmación"
+          title="4) Resumen y confirmación"
           subtitle="Todo listo para compartir y repetir en otro servicio"
         />
       </CardHeader>
