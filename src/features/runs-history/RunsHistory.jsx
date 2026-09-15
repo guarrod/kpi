@@ -7,6 +7,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { KPI_CATALOG } from "@/features/kpi-wizard/kpi-catalog";
 
 const TOKEN = import.meta.env.VITE_API_TOKEN;
 const API_BASE = `${import.meta.env.BASE_URL}api`;
@@ -58,6 +59,14 @@ function catStyle(cat) {
 
 function uniqueCats(kpis = []) {
   return [...new Set(kpis.map((k) => k.cat).filter(Boolean))];
+}
+
+// Runs finalizados antes de KPI Framework v2 no tienen `capa` en su snapshot
+// (ver kpi-catalog.js). La resolvemos contra el catálogo actual por id, sin
+// romper el render si el KPI ya no existe.
+function resolveCapa(kpi) {
+  if (kpi.capa) return kpi.capa;
+  return KPI_CATALOG.find((c) => c.id === kpi.id)?.capa ?? null;
 }
 
 // ─── Delete confirmation modal ────────────────────────────────────────────────
@@ -259,9 +268,12 @@ function RunCard({ run, onDeleted }) {
                         KPIs seleccionados
                       </p>
                       <div className="space-y-2">
-                        {run.kpis.map((kpi) => (
+                        {run.kpis.map((kpi) => {
+                          const capa = resolveCapa(kpi);
+                          return (
                           <div
                             key={kpi.id}
+                            data-capa={capa || undefined}
                             className="bg-white rounded-xl border border-gray-100 px-3 py-2.5 flex items-center gap-3"
                           >
                             <div className="flex-1 min-w-0">
@@ -283,7 +295,8 @@ function RunCard({ run, onDeleted }) {
                               )}
                             </div>
                           </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}

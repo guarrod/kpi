@@ -16,6 +16,7 @@ import StepTargets from "./steps/StepTargets";
 import StepSummary from "./steps/StepSummary";
 import KPI_DETAILS from "./kpi-details";
 import { createRun, saveRun, loadRun, RUN_SCHEMA_VERSION } from "./runs-storage";
+import { KPI_CATALOG_WITH_URL, CATEGORIES } from "./kpi-catalog";
 
 // Pasos del flujo: alineación+tareas, selección, metas, resumen
 const STEP_COUNT = 4;
@@ -60,101 +61,6 @@ const buildSummary = (selected, catalog, service, bizGoal, userGoal, tasks) => {
     kpis: selectedKPIs,
   };
 };
-
-// Catálogo de KPI (resumen + cómo)
-const KPI_CATALOG = [
-  // Uso & Adopción
-  { id: "adoption", cat: "Uso & Adopción", title: "Tasa de adopción", how: "% de empresas que usan una funcionalidad en X días desde lanzamiento.", desc: "¿Se empieza a usar lo nuevo?" },
-  { id: "active", cat: "Uso & Adopción", title: "Usuarios activos (DAU/MAU)", how: "Usuarios únicos diarios/mensuales que iniciaron sesión o realizaron acciones.", desc: "¿Hay hábito?" },
-  { id: "activation", cat: "Uso & Adopción", title: "Tasa de activación", how: "% que completan la primera operación clave tras registrarse.", desc: "¿Llegan al momento 'aha'?" },
-  { id: "featureUsage", cat: "Uso & Adopción", title: "Uso por funcionalidad", how: "% de sesiones con uso de la función (ej. pagos masivos).", desc: "¿Qué tanto se usa cada módulo?" },
-
-  // Eficiencia & Fricción
-  { id: "timeOnTask", cat: "Eficiencia & Fricción", title: "Tiempo en tarea", how: "Promedio (p50/p90) desde inicio a confirmación.", desc: "¿Qué tan rápido ocurre?" },
-  { id: "success", cat: "Eficiencia & Fricción", title: "Tasa de éxito", how: "% de operaciones completadas sin error (sin necesidad de reintentos).", desc: "¿Se logra sin trabas?" },
-  { id: "steps", cat: "Eficiencia & Fricción", title: "Pasos por tarea", how: "Promedio de pantallas/clics para completar.", desc: "¿Es compacto?" },
-  { id: "abandon", cat: "Eficiencia & Fricción", title: "Tasa de abandono", how: "% que inician y no finalizan el flujo.", desc: "¿Dónde se caen?" },
-  { id: "userError", cat: "Eficiencia & Fricción", title: "Errores de usuario/flujo", how: "Errores percibidos (ej. validación fallida) por cada 1.000 operaciones.", desc: "¿Qué rompe la tarea para el cliente?" },
-  { id: "latency", cat: "Eficiencia & Fricción", title: "Tiempo de respuesta", how: "ms de latencia en endpoints/pantallas clave.", desc: "¿Carga rápido?" },
-  { id: "interruption", cat: "Eficiencia & Fricción", title: "Transacciones interrumpidas", how: "% de operaciones que no concluyen por timeout o caída técnica.", desc: "¿Qué tan confiable es?" },
-
-  // Satisfacción & Experiencia
-  { id: "nps", cat: "Satisfacción & Experiencia", title: "NPS", how: "% promotores − % detractores tras usar el módulo.", desc: "¿Nos recomendarían?" },
-  { id: "csat", cat: "Satisfacción & Experiencia", title: "CSAT", how: "Promedio de satisfacción 1–5 al finalizar tarea.", desc: "¿Quedaron conformes?" },
-  { id: "sus", cat: "Satisfacción & Experiencia", title: "SUS", how: "Escala SUS 0–100 post-uso.", desc: "¿Qué tan usable es?" },
-
-  // Conversión & Negocio
-  { id: "conversion", cat: "Conversión & Negocio", title: "Tasa de conversión", how: "% de usuarios que completan una acción objetivo.", desc: "¿Cuántos completan?" },
-  { id: "value", cat: "Conversión & Negocio", title: "Valor por usuario", how: "ARPU u otra medida de valor.", desc: "¿Cuánto valor produce?" },
-  { id: "cross", cat: "Conversión & Negocio", title: "Cross/Up-sell", how: "% de clientes que adoptan módulos adicionales.", desc: "¿Se expande el uso?" },
-  { id: "retention", cat: "Conversión & Negocio", title: "Retención", how: "% de clientes que siguen activos.", desc: "¿Se quedan?" },
-
-  // Autoservicio & Costos
-  { id: "selfservice", cat: "Autoservicio & Costos", title: "Autoservicio", how: "% de tareas resueltas sin soporte humano.", desc: "¿Cuánto se auto-resuelve?" },
-  { id: "digitalVsBranch", cat: "Autoservicio & Costos", title: "Digital vs Sucursal", how: "% de operaciones digitales vs presenciales.", desc: "¿Cuánto migra a digital?" },
-  { id: "supportReduction", cat: "Autoservicio & Costos", title: "Reducción de soporte", how: "Variación de tickets por 1.000 usuarios.", desc: "¿Baja el soporte?" },
-
-  // Seguridad & Cumplimiento
-  { id: "helpUsage", cat: "Seguridad & Cumplimiento", title: "Uso de ayuda", how: "% de sesiones con vistas a ayuda.", desc: "¿Necesitan ayuda?" },
-  { id: "failedLogin", cat: "Seguridad & Cumplimiento", title: "Login fallido", how: "Intentos fallidos por usuario.", desc: "¿Problemas de acceso?" },
-  { id: "twoFa", cat: "Seguridad & Cumplimiento", title: "2FA", how: "% de sesiones con 2FA.", desc: "¿Aumenta la seguridad?" },
-  { id: "kyc", cat: "Seguridad & Cumplimiento", title: "KYC", how: "% de KYC completado.", desc: "¿Cumplimiento?" },
-  { id: "fraud", cat: "Seguridad & Cumplimiento", title: "Fraude", how: "Intentos/bloqueos por fraude.", desc: "¿Riesgo controlado?" },
-
-  // Salud técnica
-  { id: "onboarding", cat: "Salud técnica", title: "Onboarding técnico", how: "Tiempo/esfuerzo de alta técnica.", desc: "¿Cuán complejo es?" },
-  { id: "uptime", cat: "Salud técnica", title: "Uptime", how: "% de disponibilidad.", desc: "¿Disponibilidad estable?" },
-  { id: "errors5xx", cat: "Salud técnica", title: "Errores 5xx", how: "Errores 5xx por 10k req.", desc: "¿Errores del servidor?" },
-  { id: "mttr", cat: "Salud técnica", title: "MTTR", how: "Tiempo medio de recuperación.", desc: "¿Qué tan rápido reponemos?" },
-];
-
-const KPI_URLS = {
-  adoption: "/kpi/adoption",
-  active: "/kpi/active",
-  activation: "/kpi/activation",
-  featureUsage: "/kpi/featureUsage",
-  timeOnTask: "/kpi/timeOnTask",
-  success: "/kpi/success",
-  steps: "/kpi/steps",
-  abandon: "/kpi/abandon",
-  userError: "/kpi/userError",
-  latency: "/kpi/latency",
-  interruption: "/kpi/interruption",
-  nps: "/kpi/nps",
-  csat: "/kpi/csat",
-  sus: "/kpi/sus",
-  ces: "/kpi/ces",
-  complaints: "/kpi/complaints",
-  conversion: "/kpi/conversion",
-  value: "/kpi/value",
-  cross: "/kpi/cross",
-  retention: "/kpi/retention",
-  selfservice: "/kpi/selfservice",
-  digitalVsBranch: "/kpi/digitalVsBranch",
-  supportReduction: "/kpi/supportReduction",
-  helpUsage: "/kpi/helpUsage",
-  failedLogin: "/kpi/failedLogin",
-  twoFa: "/kpi/twoFa",
-  kyc: "/kpi/kyc",
-  fraud: "/kpi/fraud",
-  onboarding: "/kpi/onboarding",
-  uptime: "/kpi/uptime",
-  errors5xx: "/kpi/errors5xx",
-  mttr: "/kpi/mttr",
-};
-
-const KPI_CATALOG_WITH_URL = KPI_CATALOG.map((k) => ({ ...k, url: KPI_URLS[k.id] || "" }));
-
-
-const CATEGORIES = [
-  "Uso & Adopción",
-  "Eficiencia & Fricción",
-  "Satisfacción & Experiencia",
-  "Conversión & Negocio",
-  "Autoservicio & Costos",
-  "Seguridad & Cumplimiento",
-  "Salud técnica",
-];
 
 async function sha256Base64(str) {
   try {

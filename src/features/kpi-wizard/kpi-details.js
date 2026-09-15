@@ -2478,6 +2478,712 @@ const KPI_DETAILS = {
   </div>
   `
   },
+
+  // ── KPIs nuevos v2 ──────────────────────────────────────────────────────
+
+  transactionVolume: {
+  title: "Volumen y monto transaccionado",
+  subtitle: "Negocio: ¿cuánto mueve el producto?",
+  html: `
+  <div class="space-y-4">
+    <p>
+      El KPI <strong>Volumen y monto transaccionado</strong> cuantifica cuántas operaciones procesa el producto
+      y qué monto total mueven en el periodo. Es la medida más directa de <em>tamaño de negocio</em>: no dice si
+      el producto es bueno, dice cuánta actividad económica real está soportando.
+    </p>
+
+    <div>
+      <p class="font-semibold">Definición:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Número de operaciones completadas en el periodo, y monto total acumulado que representan.</li>
+        <li>Es un valor absoluto, no una tasa: no tiene denominador ni universo de comparación.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Fórmulas:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li><code>Volumen = Nº de operaciones completadas en el periodo</code></li>
+        <li><code>Monto transaccionado = Σ montos de todas las operaciones completadas en el periodo</code></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">¿Qué mide?</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>El tamaño real de la actividad que pasa por el producto.</li>
+        <li>Si el crecimiento viene de más operaciones (base amplia) o de montos más altos (concentración).</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Interpretación:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Monto y volumen creciendo juntos: crecimiento sano, base de uso amplia.</li>
+        <li><strong>Monto sube pero volumen cae:</strong> el producto se concentró en pocos usuarios grandes — revisar segmentación antes de celebrar.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Buenas prácticas:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Reportar siempre los dos números juntos (nunca solo el monto): el volumen es el que revela concentración.</li>
+        <li>Segmentar por tamaño de empresa para saber quién explica el crecimiento.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Ejemplo:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Mes: 12.000 operaciones, monto total USD 8,4M.</li>
+        <li>Mes siguiente: 11.200 operaciones (baja), monto total USD 9,1M (sube).</li>
+        <li>El monto crece por unas pocas empresas grandes que subieron ticket promedio — no por más adopción.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Alertas y anti-patrones:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>No reportar solo el monto: sin el volumen, la concentración queda invisible.</li>
+        <li>No es una tasa: no intentes dividirlo por una población, es un valor absoluto.</li>
+      </ul>
+    </div>
+  </div>
+  `
+  },
+
+  feeIncome: {
+  title: "Ingreso por comisiones",
+  subtitle: "Negocio: ¿cuánto deja el producto?",
+  html: `
+  <div class="space-y-4">
+    <p>
+      El KPI <strong>Ingreso por comisiones</strong> mide cuánto genera el módulo en comisiones durante el periodo.
+      Es el KPI de negocio más directo: traduce actividad del producto en resultado financiero para el banco.
+    </p>
+
+    <div>
+      <p class="font-semibold">Definición:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Suma de comisiones cobradas por el uso del módulo en el periodo.</li>
+        <li>Valor absoluto, sin denominador — no es un porcentaje.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Fórmula:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li><code>Ingreso por comisiones = Σ comisiones generadas por el módulo en el periodo</code></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">¿Qué mide?</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>El retorno financiero directo de la actividad del producto.</li>
+        <li>Si la estructura de comisiones está capturando el valor que el producto genera.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Interpretación:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Si el ingreso no crece al mismo ritmo que <em>Volumen y monto transaccionado</em>, el problema es la estructura de comisiones, no el producto.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Buenas prácticas:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Leer siempre junto con volumen/monto transaccionado — un ingreso plano con volumen creciente es una señal de pricing, no de adopción.</li>
+        <li>Segmentar por tipo de operación para saber qué línea de comisión explica el cambio.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Ejemplo:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Trimestre: volumen transaccionado sube 18%, ingreso por comisiones sube solo 4%.</li>
+        <li>Señal de que la estructura de comisiones no está capturando el crecimiento — revisar pricing, no UX.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Alertas y anti-patrones:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>No atribuir una caída de ingreso a "el producto no funciona" sin antes descartar cambios de pricing o exenciones.</li>
+      </ul>
+    </div>
+  </div>
+  `
+  },
+
+  penetration: {
+  title: "Penetración",
+  subtitle: "Negocio: ¿a cuántos les llega?",
+  html: `
+  <div class="space-y-4">
+    <p>
+      El KPI <strong>Penetración</strong> mide qué porcentaje de la base total de clientes de Banca Empresas
+      tiene habilitada una funcionalidad. Es el denominador que le falta a la <em>Tasa de adopción</em>: sin
+      saber a cuántos les llega, adopción no se puede leer bien.
+    </p>
+
+    <div>
+      <p class="font-semibold">Definición:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Proporción de clientes de Banca Empresas que tienen la funcionalidad habilitada, tengan o no la hayan usado.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Fórmula:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li><code>Penetración (%) = (Nº de clientes con la funcionalidad habilitada ÷ Total de clientes de Banca Empresas) × 100</code></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">¿Qué mide?</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>El alcance de la habilitación, no del uso — es un paso previo a la adopción.</li>
+        <li>Qué tan disponible está realmente la funcionalidad para la base total de clientes.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Interpretación:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Penetración baja: el problema no es adopción, es habilitación. No se arregla con diseño ni con campañas de uso.</li>
+        <li>Penetración alta con adopción baja: ahí sí el problema es de producto/UX.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Doble lectura:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Es el denominador de la <em>Tasa de adopción</em>. Sin este número, la adopción no se puede calcular correctamente.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Ejemplo:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Base total: 5.000 clientes de Banca Empresas. Habilitados: 1.200.</li>
+        <li><code>Penetración = (1.200 ÷ 5.000) × 100 = 24%</code>.</li>
+        <li>Antes de invertir en campañas de adopción, revisar por qué solo 24% tiene acceso habilitado.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Alertas y anti-patrones:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>No confundir con adopción: penetración es habilitación, no uso.</li>
+        <li>No reportar adopción sin este número al lado — sin denominador, la lectura es incompleta.</li>
+      </ul>
+    </div>
+  </div>
+  `
+  },
+
+  customerChurn: {
+  title: "Baja de cliente",
+  subtitle: "Negocio: ¿se van del banco?",
+  html: `
+  <div class="space-y-4">
+    <p>
+      El KPI <strong>Baja de cliente</strong> mide qué porcentaje de clientes cierra por completo su relación
+      comercial con el banco en el periodo. Es una señal de negocio, no de producto: se escala a quien gestiona
+      la relación comercial, no se resuelve desde el squad.
+    </p>
+
+    <div>
+      <p class="font-semibold">Definición:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Proporción de clientes activos al inicio del periodo que cierran su relación comercial con el banco durante ese periodo.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Fórmula:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li><code>Baja de cliente (%) = (Nº de clientes que cierran relación en el trimestre ÷ Nº de clientes activos al inicio del trimestre) × 100</code></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">¿Qué mide?</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Pérdida real de la relación comercial, no de uso de una funcionalidad.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Interpretación:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Es una señal de negocio: cuando sube, se escala a la relación comercial, no se gestiona desde el squad de producto.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Doble lectura:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>No confundir con <em>Dormancia</em>: baja de cliente es abandono de la relación con el banco; dormancia es inactividad en una funcionalidad puntual, el cliente sigue siendo cliente.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Ejemplo:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Inicio de trimestre: 3.000 clientes activos. Cierran relación: 45.</li>
+        <li><code>Baja de cliente = (45 ÷ 3.000) × 100 = 1,5%</code>.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Alertas y anti-patrones:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>No tratarlo como KPI de producto: el squad no puede moverlo directamente, solo escalarlo.</li>
+        <li>No mezclarlo con dormancia — son fenómenos distintos con acciones distintas.</li>
+      </ul>
+    </div>
+  </div>
+  `
+  },
+
+  timeToValue: {
+  title: "Time to value",
+  subtitle: "Producto: ¿en cuánto llegan al primer valor?",
+  html: `
+  <div class="space-y-4">
+    <p>
+      <strong>Time to value</strong> mide cuánto tiempo pasa entre que una empresa se da de alta y realiza su
+      primera operación de valor real. Complementa a la <em>Tasa de activación</em>: activación dice <em>si</em>
+      llegaron, time to value dice <em>en cuánto</em>.
+    </p>
+
+    <div>
+      <p class="font-semibold">Definición:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Tiempo mediano (p50) entre el alta de la empresa y su primera operación de valor, medido sobre las empresas dadas de alta en el periodo.</li>
+        <li>Ventana de observación: 30 días desde el alta.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Fórmula:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li><code>Time to value (p50) = mediana de (fecha primera operación de valor − fecha de alta)</code>, sobre empresas dadas de alta en el periodo.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">¿Qué mide?</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>La velocidad real del onboarding y los primeros pasos, no solo si el usuario "llegó".</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Interpretación:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Si sube, revisar onboarding y primeros pasos — no el flujo transaccional en sí, que puede estar sano.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Se solapa con:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li><em>Tasa de activación</em> — activación dice si llegaron al momento de valor, time to value dice cuánto tardaron en llegar.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Ejemplo:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Empresas dadas de alta en el mes: 400. Mediana de días a la primera operación de valor: 9 días.</li>
+        <li>Tras simplificar el onboarding, la mediana baja a 5 días en el mes siguiente.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Alertas y anti-patrones:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Usar mediana (p50), no promedio: unos pocos casos extremos pueden distorsionar el promedio.</li>
+        <li>No confundir con activación: activación es binaria (llegó/no llegó), time to value es una duración.</li>
+      </ul>
+    </div>
+  </div>
+  `
+  },
+
+  usageFrequency: {
+  title: "Frecuencia de uso",
+  subtitle: "Producto: ¿cuánto lo usan los que lo usan?",
+  html: `
+  <div class="space-y-4">
+    <p>
+      El KPI <strong>Frecuencia de uso</strong> mide cuántas operaciones realiza, en promedio, cada usuario
+      activo del periodo. A diferencia de DAU/MAU (que cuenta cuántos usan el producto), este mide
+      <em>cuánto</em> lo usa cada uno.
+    </p>
+
+    <div>
+      <p class="font-semibold">Definición:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Operaciones por usuario activo, medido sobre los usuarios activos del periodo (mes calendario).</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Fórmula:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li><code>Frecuencia de uso = Nº total de operaciones del periodo ÷ Nº de usuarios activos del periodo</code></li>
+        <li>Recomendado reportar también la mediana, no solo el promedio.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">¿Qué mide?</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Intensidad de uso, más allá de si el usuario está o no activo.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Interpretación:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Si el promedio sube pero la mediana no, hay pocos usuarios muy intensivos concentrando el uso — segmentar antes de sacar conclusiones generales.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Ejemplo:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Mes: 40.000 operaciones, 8.000 usuarios activos.</li>
+        <li><code>Frecuencia de uso = 40.000 ÷ 8.000 = 5 operaciones por usuario</code>.</li>
+        <li>La mediana es 2: unos pocos usuarios power-user están inflando el promedio.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Alertas y anti-patrones:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>No reportar solo el promedio; sin mediana o distribución, oculta concentración.</li>
+      </ul>
+    </div>
+  </div>
+  `
+  },
+
+  adoptionDepth: {
+  title: "Profundidad de adopción",
+  subtitle: "Producto: ¿cuánto del producto usan?",
+  html: `
+  <div class="space-y-4">
+    <p>
+      El KPI <strong>Profundidad de adopción</strong> mide cuántos módulos distintos usa cada empresa, no si
+      usa uno solo de forma intensiva. Es la versión de comportamiento de <em>Cross/Up-sell</em>, que mira lo
+      mismo pero desde el ingreso.
+    </p>
+
+    <div>
+      <p class="font-semibold">Definición:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Número de módulos distintos usados por empresa en el periodo (mes calendario), medido sobre empresas activas del periodo.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Fórmula:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li><code>Profundidad de adopción = Nº de módulos distintos usados por empresa en el periodo</code></li>
+        <li>Se reporta como distribución (ej. % de empresas con 1 módulo, con 2-3, con 4+), no solo como promedio.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">¿Qué mide?</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Qué tan integrado está el producto en el día a día de la empresa, más allá de un solo caso de uso.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Doble lectura:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Es la versión de comportamiento de <em>Cross/Up-sell</em>, que mira lo mismo desde el dinero.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Ejemplo:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>De 500 empresas activas: 60% usa solo 1 módulo, 30% usa 2-3, 10% usa 4 o más.</li>
+        <li>Ese 10% con mayor profundidad es el segmento con menor probabilidad de churn — priorizarlo para case studies.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Alertas y anti-patrones:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>No reducirlo a un promedio único: la distribución por buckets es lo que habilita acciones concretas.</li>
+      </ul>
+    </div>
+  </div>
+  `
+  },
+
+  dormancy: {
+  title: "Dormancia",
+  subtitle: "Producto: ¿lo dejaron?",
+  html: `
+  <div class="space-y-4">
+    <p>
+      El KPI <strong>Dormancia</strong> mide qué porcentaje de empresas que estaban activas dejan de usar la
+      funcionalidad por más tiempo del que sería normal según su propio ritmo de uso. En banca, "cuenta
+      dormida" tiene un significado regulatorio distinto — acá se trata exclusivamente de inactividad en la
+      funcionalidad, no del estado de la cuenta.
+    </p>
+
+    <div>
+      <p class="font-semibold">Definición:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Porcentaje de empresas activas en el periodo anterior que no registran uso en una ventana mayor a dos veces la frecuencia natural de la tarea.</li>
+        <li>La ventana es específica de cada producto/tarea, no un número fijo universal.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Fórmula:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li><code>Dormancia (%) = (Nº de empresas sin uso más allá de 2x su frecuencia natural ÷ Nº de empresas activas en el periodo anterior) × 100</code></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">¿Qué mide?</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Pérdida de hábito en una funcionalidad específica, antes de que se convierta en baja de cliente.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Interpretación:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Identificar el segmento dormido antes de lanzar una campaña de reactivación — una campaña sin segmento definido es ruido.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Doble lectura:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>En banca, "cuenta dormida" tiene significado regulatorio. En esta herramienta, dormancia es inactividad en la funcionalidad — no estado de cuenta.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Ejemplo:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Frecuencia natural de la tarea: 1 vez por semana. Ventana de dormancia: más de 2 semanas sin uso.</li>
+        <li>De 800 empresas activas el mes anterior, 96 no usan la función hace más de 2 semanas → <code>Dormancia = 12%</code>.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Alertas y anti-patrones:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>No usar una ventana fija para todos los productos: define la ventana según la frecuencia natural de cada tarea.</li>
+        <li>No confundir con baja de cliente: la empresa sigue siendo cliente, solo dejó de usar esta funcionalidad.</li>
+      </ul>
+    </div>
+  </div>
+  `
+  },
+
+  reactivation: {
+  title: "Reactivación",
+  subtitle: "Producto: ¿vuelven?",
+  html: `
+  <div class="space-y-4">
+    <p>
+      El KPI <strong>Reactivación</strong> mide qué porcentaje de empresas dormidas vuelve a operar, separando
+      el retorno orgánico del inducido por campaña. Es el complemento natural de <em>Dormancia</em>: mide a
+      quién se recupera, no solo a quién se pierde.
+    </p>
+
+    <div>
+      <p class="font-semibold">Definición:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Porcentaje de empresas clasificadas como dormidas al inicio de una ventana de 30 días que vuelven a operar dentro de esa ventana.</li>
+        <li>Se separa el retorno <em>orgánico</em> (sin campaña) del <em>inducido</em> (por una campaña específica).</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Fórmula:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li><code>Reactivación (%) = (Nº de empresas dormidas que vuelven a operar en 30 días ÷ Nº de empresas dormidas al inicio de la ventana) × 100</code></li>
+        <li>Reportar por separado el % atribuible a campaña vs. el % orgánico.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">¿Qué mide?</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>La capacidad real de recuperar uso, y si esa recuperación depende de intervención activa o es espontánea.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Interpretación:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Si solo reactiva la campaña y no el producto, el problema de fondo (por qué se durmieron) sigue sin resolverse.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Ejemplo:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>200 empresas dormidas al inicio del mes. 30 vuelven a operar: 12 por campaña, 18 de forma orgánica.</li>
+        <li><code>Reactivación total = (30 ÷ 200) × 100 = 15%</code>, de la cual 9% es orgánica y 6% inducida.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Alertas y anti-patrones:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>No reportar reactivación total sin separar campaña de orgánico: son señales distintas para decisiones distintas.</li>
+      </ul>
+    </div>
+  </div>
+  `
+  },
+
+  retryRate: {
+  title: "Tasa de reintento",
+  subtitle: "Experiencia: ¿tienen que insistir?",
+  html: `
+  <div class="space-y-4">
+    <p>
+      La <strong>Tasa de reintento</strong> mide qué porcentaje de operaciones el mismo usuario repite justo
+      después de un fallo. Es una señal barata de obtener y muy fuerte: si sube, hay un paso del flujo que no
+      comunica bien el error.
+    </p>
+
+    <div>
+      <p class="font-semibold">Definición:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Porcentaje de operaciones iniciadas en el periodo que el mismo usuario repite dentro de los 15 minutos posteriores a un fallo.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Fórmula:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li><code>Tasa de reintento (%) = (Nº de operaciones repetidas por el mismo usuario dentro de 15 min tras un fallo ÷ Nº de operaciones iniciadas en el periodo) × 100</code></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">¿Qué mide?</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Fricción inmediata y su costo en insistencia del usuario, no solo la tasa de error en sí.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Interpretación:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Es una señal barata y fuerte: si sube, hay un paso que no comunica el error con claridad suficiente para que el usuario corrija sin reintentar a ciegas.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Ejemplo:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>2.000 operaciones iniciadas en la semana; 180 se repiten dentro de los 15 minutos tras un fallo.</li>
+        <li><code>Tasa de reintento = (180 ÷ 2.000) × 100 = 9%</code>.</li>
+        <li>Tras mejorar el mensaje de error en el paso de validación de monto, baja a 4% la semana siguiente.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Alertas y anti-patrones:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>No confundir con <em>Tasa de éxito</em>: un reintento exitoso sigue contando como fricción aunque termine bien.</li>
+        <li>Ventana de 15 minutos es la referencia — ajustarla solo si el flujo tiene un ciclo natural distinto.</li>
+      </ul>
+    </div>
+  </div>
+  `
+  },
+
+  accessibility: {
+  title: "Accesibilidad",
+  subtitle: "Experiencia: ¿puede usarlo cualquiera?",
+  html: `
+  <div class="space-y-4">
+    <p>
+      El KPI <strong>Accesibilidad</strong> mide qué porcentaje de las pantallas del flujo crítico cumple con
+      el estándar WCAG 2.2 nivel AA. A diferencia de los demás KPIs de experiencia, no se mide con datos de
+      uso sino con auditoría de cumplimiento por release.
+    </p>
+
+    <div>
+      <p class="font-semibold">Definición:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Porcentaje de pantallas del flujo crítico que cumplen WCAG 2.2 nivel AA, evaluado por release (no continuo).</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Fórmula:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li><code>Accesibilidad (%) = (Nº de pantallas del flujo crítico que cumplen WCAG 2.2 AA ÷ Nº total de pantallas del flujo crítico) × 100</code></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">¿Qué mide?</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Si el producto es usable por personas con discapacidad visual, motora o cognitiva, no solo por el usuario promedio.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Interpretación:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Si baja tras un release, es deuda técnica que se paga en el siguiente sprint — no "cuando haya tiempo".</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Buenas prácticas:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Auditar con herramientas automáticas (axe, Lighthouse) más revisión manual de navegación por teclado y lector de pantalla.</li>
+        <li>Incluirlo como criterio de aceptación del release, no como checklist posterior.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Ejemplo:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>Flujo crítico: 12 pantallas. Auditoría post-release: 9 cumplen WCAG 2.2 AA.</li>
+        <li><code>Accesibilidad = (9 ÷ 12) × 100 = 75%</code> → las 3 pantallas restantes entran como deuda del siguiente sprint.</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-semibold">Alertas y anti-patrones:</p>
+      <ul class="list-disc list-inside pl-2">
+        <li>No confundir "pasa el linter automático" con "cumple AA": la revisión manual (teclado, lector de pantalla) es indispensable.</li>
+        <li>No dejarlo fuera del Definition of Done del release.</li>
+      </ul>
+    </div>
+  </div>
+  `
+  },
 };
 
 export default KPI_DETAILS;
