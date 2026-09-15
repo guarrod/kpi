@@ -7,6 +7,7 @@ import { ListChecks, Search } from "lucide-react";
 import SectionTitle from "../components/SectionTitle";
 import LayerBadge from "../components/LayerBadge";
 import HabilitadorNote from "../components/HabilitadorNote";
+import NewBadge from "../components/NewBadge";
 import { LAYER_LABELS, LAYER_STYLES } from "../kpi-catalog";
 
 export default function StepSelectKPIs({
@@ -106,6 +107,7 @@ export default function StepSelectKPIs({
                   <div className="gap-2 mb-1">
                     <div className="font-medium flex items-center gap-2">
                       {k.title}
+                      <NewBadge addedAt={k.addedAt} />
                       {k.url && (
                         <button
                           type="button"
