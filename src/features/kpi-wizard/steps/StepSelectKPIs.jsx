@@ -5,6 +5,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { ListChecks, Search } from "lucide-react";
 import SectionTitle from "../components/SectionTitle";
+import LayerBadge from "../components/LayerBadge";
+import HabilitadorNote from "../components/HabilitadorNote";
+import { LAYER_LABELS, LAYER_STYLES } from "../kpi-catalog";
 
 export default function StepSelectKPIs({
   search,
@@ -12,6 +15,10 @@ export default function StepSelectKPIs({
   categories,
   filterCats,
   toggleCat,
+  layers,
+  filterLayers,
+  toggleLayer,
+  selectAllLayers,
   filteredKPIs,
   selected,
   toggleKPI,
@@ -37,7 +44,35 @@ export default function StepSelectKPIs({
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap mb-2">
+            <button
+              onClick={selectAllLayers}
+              className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                filterLayers.length === layers.length
+                  ? "bg-gray-800 text-white border-gray-800"
+                  : "bg-white text-gray-400 border-gray-200"
+              }`}
+            >
+              Todas
+            </button>
+            {layers.map((layer) => {
+              const active = filterLayers.includes(layer);
+              return (
+                <button
+                  key={layer}
+                  onClick={() => toggleLayer(layer)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                    active
+                      ? LAYER_STYLES[layer]
+                      : "bg-white text-gray-400 border-gray-200"
+                  }`}
+                >
+                  {LAYER_LABELS[layer]}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-2 flex-wrap opacity-80">
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -90,12 +125,14 @@ export default function StepSelectKPIs({
                         </button>
                       )}
                     </div>
-                    <div>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <LayerBadge capa={k.capa} />
                       <Badge variant="outline">{k.cat}</Badge>
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">{k.desc}</p>
                   <p className="text-xs text-gray-400 mt-1">Cómo se mide: {k.how}</p>
+                  <HabilitadorNote capa={k.capa} className="mt-2" />
                 </div>
               </div>
             </label>

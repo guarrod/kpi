@@ -16,7 +16,15 @@ import StepTargets from "./steps/StepTargets";
 import StepSummary from "./steps/StepSummary";
 import KPI_DETAILS from "./kpi-details";
 import { createRun, saveRun, loadRun, RUN_SCHEMA_VERSION } from "./runs-storage";
-import { KPI_CATALOG_WITH_URL, CATEGORIES } from "./kpi-catalog";
+import {
+  KPI_CATALOG_WITH_URL,
+  CATEGORIES,
+  LAYERS,
+  LAYER_LABELS,
+  UNIDAD_LABELS,
+  CADENCIA_LABELS,
+} from "./kpi-catalog";
+import LayerBadge from "./components/LayerBadge";
 
 // Pasos del flujo: alineación+tareas, selección, metas, resumen
 const STEP_COUNT = 4;
@@ -36,15 +44,25 @@ const computeQuarter = (d = new Date()) => {
   return `Q${q}`;
 };
 
-const filterKPIsHelper = (catalog, cats, search) => {
+const filterKPIsHelper = (catalog, cats, layers, search) => {
   const s = (search || "").toLowerCase();
   return catalog.filter(
     (k) =>
       cats.includes(k.cat) &&
+      layers.includes(k.capa) &&
       (k.title.toLowerCase().includes(s) ||
         k.desc.toLowerCase().includes(s) ||
         k.how.toLowerCase().includes(s))
   );
+};
+
+const countByLayer = (kpis) => {
+  const counts = {};
+  kpis.forEach((k) => {
+    if (!k.capa) return;
+    counts[k.capa] = (counts[k.capa] || 0) + 1;
+  });
+  return counts;
 };
 
 const buildSummary = (selected, catalog, service, bizGoal, userGoal, tasks) => {
@@ -85,13 +103,18 @@ export default function KPIWizard() {
   const [tasks, setTasks] = React.useState(["", ""]);
   const [search, setSearch] = React.useState("");
   const [filterCats, setFilterCats] = React.useState(CATEGORIES);
+  const [filterLayers, setFilterLayers] = React.useState(LAYERS);
   const [selected, setSelected] = React.useState({});
   const [toast, setToast] = React.useState(null);
   const [info, setInfo] = React.useState({ open: false, url: "", title: "", id: "" });
   const [successOpen, setSuccessOpen] = React.useState(false);
 
   const progress = ((step + 1) / STEP_COUNT) * 100;
-  const filteredKPIs = filterKPIsHelper(KPI_CATALOG_WITH_URL, filterCats, search);
+  const filteredKPIs = filterKPIsHelper(KPI_CATALOG_WITH_URL, filterCats, filterLayers, search);
+  const selectedLayerCounts = React.useMemo(
+    () => countByLayer(Object.keys(selected).map((id) => KPI_CATALOG_WITH_URL.find((k) => k.id === id)).filter(Boolean)),
+    [selected]
+  );
 
   const KPI_BASE = import.meta?.env?.VITE_KPI_BASE_URL || "";
   const resolveKpiUrl = (url) => {
@@ -104,6 +127,12 @@ export default function KPIWizard() {
     () => KPI_CATALOG_WITH_URL.find((x) => x.id === info.id),
     [info.id]
   );
+  const sePisaConNames = React.useMemo(() => {
+    if (!kpiForModal?.sePisaCon?.length) return [];
+    return kpiForModal.sePisaCon
+      .map((id) => KPI_CATALOG_WITH_URL.find((k) => k.id === id)?.title)
+      .filter(Boolean);
+  }, [kpiForModal]);
   const modalDetail = React.useMemo(() => {
     if (!kpiForModal) return null;
     const d = KPI_DETAILS[info.id];
@@ -122,6 +151,14 @@ export default function KPIWizard() {
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
     );
   };
+
+  const toggleLayer = (layer) => {
+    setFilterLayers((prev) =>
+      prev.includes(layer) ? prev.filter((l) => l !== layer) : [...prev, layer]
+    );
+  };
+
+  const selectAllLayers = () => setFilterLayers(LAYERS);
 
   const toggleKPI = (id) => {
     setSelected((prev) => {
@@ -149,6 +186,7 @@ export default function KPIWizard() {
     setTasks(["", ""]);
     setSearch("");
     setFilterCats(CATEGORIES);
+    setFilterLayers(LAYERS);
     setSelected({});
   };
 
@@ -382,6 +420,10 @@ export default function KPIWizard() {
               categories={CATEGORIES}
               filterCats={filterCats}
               toggleCat={toggleCat}
+              layers={LAYERS}
+              filterLayers={filterLayers}
+              toggleLayer={toggleLayer}
+              selectAllLayers={selectAllLayers}
               filteredKPIs={filteredKPIs}
               selected={selected}
               toggleKPI={toggleKPI}
@@ -432,7 +474,14 @@ export default function KPIWizard() {
           <ArrowLeft className="h-4 w-4" /> Anterior
         </Button>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-400">{Object.keys(selected).length} KPIs</span>
+          <span className="text-xs text-gray-400">
+            {Object.keys(selected).length} KPI{Object.keys(selected).length === 1 ? "" : "s"}
+            {LAYERS.filter((l) => selectedLayerCounts[l]).length > 0 && (
+              <> · {LAYERS.filter((l) => selectedLayerCounts[l])
+                .map((l) => `${selectedLayerCounts[l]} ${LAYER_LABELS[l].toLowerCase()}`)
+                .join(" · ")}</>
+            )}
+          </span>
           <Button
             onClick={() =>
               step === LAST_STEP ? finalize() : setStep((s) => Math.min(LAST_STEP, s + 1))
@@ -470,30 +519,79 @@ export default function KPIWizard() {
                 </button>
               </div>
             </div>
-            <div className="flex-1 min-h-0">
-              {modalDetail ? (
-                <div className="p-4 overflow-y-auto h-full">
-                  {modalDetail?.subtitle && (
-                    <div className="text-xs text-gray-500 mb-2">
-                      {modalDetail.subtitle}
+            <div className="flex-1 min-h-0 flex flex-col">
+              {kpiForModal && (
+                <div className="p-4 border-b space-y-2 text-sm shrink-0 overflow-y-auto max-h-[50%]">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <LayerBadge capa={kpiForModal.capa} />
+                    <span className="inline-flex items-center text-xs border rounded-full px-2 py-0.5 bg-[#e7e7e7] text-slate-700">
+                      {kpiForModal.cat}
+                    </span>
+                  </div>
+                  <p className="text-gray-700">{kpiForModal.desc}</p>
+                  <p className="text-gray-500">
+                    <span className="font-medium text-gray-600">Cómo se mide: </span>
+                    {kpiForModal.how}
+                  </p>
+                  {(kpiForModal.unidad || kpiForModal.poblacion || kpiForModal.ventana || kpiForModal.cadencia) && (
+                    <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1 text-gray-600 pt-1">
+                      {kpiForModal.unidad && (
+                        <div><span className="font-medium text-gray-500">Unidad:</span> {UNIDAD_LABELS[kpiForModal.unidad] || kpiForModal.unidad}</div>
+                      )}
+                      {kpiForModal.poblacion && (
+                        <div><span className="font-medium text-gray-500">Población:</span> {kpiForModal.poblacion}</div>
+                      )}
+                      {kpiForModal.ventana && (
+                        <div><span className="font-medium text-gray-500">Ventana:</span> {kpiForModal.ventana}</div>
+                      )}
+                      {kpiForModal.cadencia && (
+                        <div><span className="font-medium text-gray-500">Cadencia:</span> {CADENCIA_LABELS[kpiForModal.cadencia] || kpiForModal.cadencia}</div>
+                      )}
                     </div>
                   )}
-                  <div
-                    className="prose max-w-none text-sm"
-                    dangerouslySetInnerHTML={{ __html: modalDetail.html }}
-                  />
-                </div>
-              ) : info.url ? (
-                <iframe
-                  src={info.url}
-                  className="w-full h-full rounded-b-xl"
-                  title="Más info"
-                />
-              ) : (
-                <div className="p-4 text-sm text-gray-500">
-                  No hay URL disponible para este KPI.
+                  {kpiForModal.decision && (
+                    <p className="pt-1">
+                      <span className="font-medium text-gray-600">Qué decisión tomo si sube o baja: </span>
+                      {kpiForModal.decision}
+                    </p>
+                  )}
+                  {sePisaConNames.length > 0 && (
+                    <p className="text-amber-700 bg-amber-50 border border-amber-100 rounded px-2 py-1.5">
+                      Se solapa con: {sePisaConNames.join(", ")}
+                    </p>
+                  )}
+                  {kpiForModal.dobleLectura && (
+                    <p className="text-indigo-700 bg-indigo-50 border border-indigo-100 rounded px-2 py-1.5">
+                      {kpiForModal.dobleLectura}
+                    </p>
+                  )}
                 </div>
               )}
+              <div className="flex-1 min-h-0">
+                {modalDetail ? (
+                  <div className="p-4 overflow-y-auto h-full">
+                    {modalDetail?.subtitle && (
+                      <div className="text-xs text-gray-500 mb-2">
+                        {modalDetail.subtitle}
+                      </div>
+                    )}
+                    <div
+                      className="prose max-w-none text-sm"
+                      dangerouslySetInnerHTML={{ __html: modalDetail.html }}
+                    />
+                  </div>
+                ) : info.url ? (
+                  <iframe
+                    src={info.url}
+                    className="w-full h-full rounded-b-xl"
+                    title="Más info"
+                  />
+                ) : !kpiForModal ? (
+                  <div className="p-4 text-sm text-gray-500">
+                    No hay URL disponible para este KPI.
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
         </div>

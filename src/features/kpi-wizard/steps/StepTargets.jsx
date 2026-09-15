@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { LineChart } from "lucide-react";
 import SectionTitle from "../components/SectionTitle";
+import LayerBadge from "../components/LayerBadge";
+import HabilitadorNote from "../components/HabilitadorNote";
 
 export default function StepTargets({
   selected,
@@ -51,7 +53,8 @@ export default function StepTargets({
           return (
             <div key={id} className="border rounded-2xl p-4">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <LayerBadge capa={k.capa} />
                   <Badge variant="outline">{k.cat}</Badge>
                   <span className="font-semibold">{k.title}</span>
                   {k.url && (
@@ -74,6 +77,7 @@ export default function StepTargets({
                 </div>
                 <span className="text-xs text-gray-500">{k.how}</span>
               </div>
+              <HabilitadorNote capa={k.capa} className="mb-2" />
               <div className="grid md:grid-cols-3 gap-3 mt-2">
                 <div>
                   <Label>Baseline</Label>

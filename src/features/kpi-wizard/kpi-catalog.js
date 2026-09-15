@@ -12,6 +12,37 @@
 
 export const LAYERS = ["negocio", "producto", "experiencia", "habilitador"];
 
+export const LAYER_LABELS = {
+  negocio: "Negocio",
+  producto: "Producto",
+  experiencia: "Experiencia",
+  habilitador: "Habilitador",
+};
+
+// Cuatro colores distinguibles, uno por capa (spec §5.2). El texto de la
+// capa siempre acompaña al color (ver LayerBadge), nunca se usa el color solo.
+export const LAYER_STYLES = {
+  negocio: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  producto: "bg-blue-50 text-blue-700 border-blue-200",
+  experiencia: "bg-violet-50 text-violet-700 border-violet-200",
+  habilitador: "bg-slate-100 text-slate-600 border-slate-300",
+};
+
+export const UNIDAD_LABELS = {
+  empresa: "Empresa",
+  usuario: "Usuario",
+  sesion: "Sesión",
+  operacion: "Operación",
+  no_aplica: "No aplica",
+};
+
+export const CADENCIA_LABELS = {
+  semanal: "Semanal",
+  mensual: "Mensual",
+  trimestral: "Trimestral",
+  por_excepcion: "Por excepción",
+};
+
 const NO_FICHA = {
   unidad: null,
   poblacion: null,

@@ -5,6 +5,8 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Copy, RefreshCw, CheckCircle2 } from "lucide-react";
 import SectionTitle from "../components/SectionTitle";
+import LayerBadge from "../components/LayerBadge";
+import HabilitadorNote from "../components/HabilitadorNote";
 import { toPng } from "html-to-image";
 
 export default function StepSummary({
@@ -101,7 +103,8 @@ export default function StepSummary({
                 return (
                   <div key={id} className="border rounded-2xl p-3">
                     <div className="items-center justify-between gap-2">
-                      <div className="mb-2">
+                      <div className="mb-2 flex items-center gap-1.5 flex-wrap">
+                        <LayerBadge capa={k.capa} />
                         <Badge variant="outline">{k.cat}</Badge>
                       </div>
                       <div className="gap-2">
@@ -128,6 +131,7 @@ export default function StepSummary({
                         <div className="text-xs text-gray-500">{k.desc}</div>
                       </div>
                     </div>
+                    <HabilitadorNote capa={k.capa} className="mt-2" />
                     <div className="grid grid-cols-3 gap-2 text-xs mt-2">
                       <div>
                         <span className="text-gray-500">Baseline:</span> {meta.baseline || <i>—</i>}

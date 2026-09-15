@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { KPI_CATALOG } from "@/features/kpi-wizard/kpi-catalog";
+import LayerBadge from "@/features/kpi-wizard/components/LayerBadge";
 
 const TOKEN = import.meta.env.VITE_API_TOKEN;
 const API_BASE = `${import.meta.env.BASE_URL}api`;
@@ -273,12 +274,14 @@ function RunCard({ run, onDeleted }) {
                           return (
                           <div
                             key={kpi.id}
-                            data-capa={capa || undefined}
                             className="bg-white rounded-xl border border-gray-100 px-3 py-2.5 flex items-center gap-3"
                           >
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-gray-800 truncate">{kpi.title}</p>
-                              <p className="text-xs text-gray-400 truncate">{kpi.cat}</p>
+                              <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                                <LayerBadge capa={capa} />
+                                <p className="text-xs text-gray-400 truncate">{kpi.cat}</p>
+                              </div>
                             </div>
                             <div className="flex gap-4 shrink-0">
                               {kpi.baseline && (
