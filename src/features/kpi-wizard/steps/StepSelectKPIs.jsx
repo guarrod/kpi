@@ -94,10 +94,11 @@ export default function StepSelectKPIs({
           {filteredKPIs.map((k) => (
             <label
               key={k.id}
-              className={`border rounded-2xl p-4 cursor-pointer transition-shadow ${
+              className={`relative border rounded-2xl p-4 cursor-pointer transition-shadow ${
                 selected[k.id] ? "border-magno-600 shadow-md" : "hover:shadow-sm"
               }`}
             >
+              <NewBadge addedAt={k.addedAt} className="absolute top-[5px] right-[5px]" />
               <div className="flex items-start gap-3">
                 <Checkbox
                   checked={!!selected[k.id]}
@@ -107,7 +108,6 @@ export default function StepSelectKPIs({
                   <div className="gap-2 mb-1">
                     <div className="font-medium flex items-center gap-2">
                       {k.title}
-                      <NewBadge addedAt={k.addedAt} />
                       {k.url && (
                         <button
                           type="button"
